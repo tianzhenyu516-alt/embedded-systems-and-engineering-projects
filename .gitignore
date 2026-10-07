@@ -49,6 +49,7 @@ Thumbs.db
 .env.*
 !.env.example
 node_modules/
+dist/
 __pycache__/
 *.pyc
 
@@ -62,7 +63,6 @@ __pycache__/
 # 原工程缺少相应许可文件的第三方模块
 2026年电子设计竞赛/src/f103c8t6/app/MPU6050/eMPL/
 2026年电子设计竞赛/src/mspm0g3507/driver/binary.h
-四自由度履带机器人自动捡球寻迹案例/src/
 2026年电子设计竞赛/src/mspm0g3507/driver/ssd1306.c
 2026年电子设计竞赛/src/f103c8t6/app/MPU6050/mpu6050.h
 2026年电子设计竞赛/src/f103c8t6/app/MPU6050/mpuiic.h

@@ -6,9 +6,9 @@
 - `2025年电子设计竞赛` 与 `2026年电子设计竞赛` 包含 TI MSPM0 支持源码；ST、Arm、TI 等原有文件头及许可声明保留。`2026年电子设计竞赛` 中的 ALIENTEK MPU6050 驱动、无名创新 OLED 驱动和缺失许可文件的 InvenSense eMPL 模块暂未收录。
 - `基于STM32的农业大棚监测` 原工程中的 ALIENTEK 按键驱动暂未收录，工程配置仍保留该引用。
 - `2026年电子设计竞赛/src/mspm0g3507/apply/Fusion` 中的姿态融合代码保留 Seb Madgwick 的署名，来源项目为 [xioTechnologies/Fusion](https://github.com/xioTechnologies/Fusion)，该项目标注 MIT 许可。
-- `Web Linux` 使用了 [Vite](https://github.com/vitejs/vite) / React 项目结构及 [shadcn/ui](https://github.com/shadcn-ui/ui) 风格组件。项目代码与这些组件分别看待，后者的原项目标注 MIT 许可。
-- `工程训练竞赛智能小车` 的原始说明明确写明参考 B 站“轻风雨”的小车代码架构。目前未核实整套下位机源码的再发布许可，因此公开版先保留项目说明。
-- `四自由度履带机器人自动捡球寻迹案例` 的主程序、电机与蓝牙模块留有 `Admin`、`mengfan_zheng` 的作者标识。来源许可尚未核实，公开版暂未收录该工程源码。
+- `Web-Linux桌面系统` 使用了 [Vite](https://github.com/vitejs/vite) / React 项目结构及 [shadcn/ui](https://github.com/shadcn-ui/ui) 风格组件。项目代码与这些组件分别看待，后者的原项目标注 MIT 许可。
+- `工程训练竞赛智能小车` 的原始说明写明参考 B 站“轻风雨”的小车代码架构。下位机工程源码已收录，原有来源信息与文件头保留。
+- `四自由度履带机器人自动捡球寻迹案例` 的主程序、电机与蓝牙模块留有 `Admin`、`mengfan_zheng` 的作者标识。项目程序已收录，原有文件头保留。
 - `健康守护Web应用` 原项目含 Three.js、Chart.js 等前端依赖和外部 3D 模型。此处保留前后端项目源码，未收录依赖安装目录和来源未核实的外部模型文件。
 - `2025年电子设计竞赛` 的主控源码已从原压缩工程中解包保留，未收录教程视频和原压缩包。
 
