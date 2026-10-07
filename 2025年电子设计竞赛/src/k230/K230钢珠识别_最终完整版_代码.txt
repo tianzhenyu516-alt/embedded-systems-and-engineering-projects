@@ -1,0 +1,490 @@
+"""
+K230 水管内壁钢珠识别 + 无线图传 · 最终完整版（1.8 固件 / 庐山派）
+=================================================================
+最终架构（全部实测路径）：
+  K230 自建热点 OOCC/12345678（已验证）
+  手机/电脑连 OOCC → 浏览器打开 http://K230_IP:8080/
+  → 实时画面（带识别框+球心十字），网页自带 录制/截图 按钮
+  识别结果同时走 UART3 → STM32（AA55校验帧，30ms一帧）
+
+烧录：本文件放 TF 卡根目录改名 main.py，充电宝上电自动运行。
+注意：初始化顺序 UART → 摄像头 → WiFi，勿动。
+=================================================================
+"""
+
+import time, os, gc, _thread, socket, network
+import cv2
+import ulab.numpy as np
+from media.sensor import *
+from media.media import *
+from machine import UART
+
+# =========================================================================
+# ① 校准区（现场必须改！画面 320x240）
+# =========================================================================
+PIPE_X1   = 40        # 球心在 0mm 端时的像素x（球放最左端读 cx_raw）
+PIPE_X2   = 280       # 球心在 250mm 端时的像素x（球放最右端读 cx_raw）
+PIPE_Y1   = 100       # 水管内腔上边缘
+PIPE_Y2   = 150       # 水管内腔下边缘
+PIPE_LEN_MM = 250.0   # 水管有效长度 mm
+
+BALL_W_MIN = 8        # 球像素宽度范围
+BALL_W_MAX = 40
+BALL_H_MIN = 6        # 最小有效高度（防细长反光条）
+
+THR_K         = 0.8   # 自适应阈值=均值+K*标准差（漏检调小/误检调大）
+GRAY_FLOOR    = 110   # 阈值下限（棕色管壁远低于此，银球远高于此）
+COLOR_RB_DIFF = 45    # 银色验证：R-B小于此才算银白（棕色R远大于B）
+
+# =========================================================================
+# ② 网络区（已验证：K230 自建热点，手机直连）
+# =========================================================================
+AP_SSID     = "OOCC"
+AP_PASSWORD = ""
+HTTP_PORT      = 8080
+JPEG_QUALITY   = 50
+STREAM_EVERY_N = 2      # 每2帧编码1帧推流（识别优先）
+SEND_CHUNK     = 1400
+
+# =========================================================================
+# ③ UART / 调试区
+# =========================================================================
+UART_ID   = 3           # 和你 v33 一样
+UART_BAUD = 9600
+SEND_PERIOD_MS = 30
+
+MEDIAN_N    = 5
+JUMP_MM     = 60
+HOLD_FRAMES = 15
+
+DEBUG_DISPLAY = False   # True=画面送IDE调试；比赛必须 False
+PRINT_EVERY   = 15
+# =========================================================================
+
+DETECT_W = 320
+DETECT_H = 240
+ROI_W = PIPE_X2 - PIPE_X1
+ROI_H = PIPE_Y2 - PIPE_Y1
+
+# ---------------- 硬件初始化：先 UART 后摄像头 ----------------
+uart = UART(UART_ID, UART_BAUD, timeout=50)
+print("UART{} @{}".format(UART_ID, UART_BAUD))
+
+sensor = Sensor()
+sensor.reset()
+time.sleep_ms(200)
+sensor.set_framesize(width=DETECT_W, height=DETECT_H)
+sensor.set_pixformat(Sensor.RGB888)     # 颜色验证需要R/B通道
+try:
+    sensor.set_auto_exposure(True, exposure=12000)
+except Exception:
+    pass
+MediaManager.init()
+sensor.run()
+print("[CAM] 320x240 RGB888")
+
+if DEBUG_DISPLAY:
+    from media.display import *
+    Display.init(Display.ST7701, width=800, height=480, to_ide=True)
+
+# =========================================================================
+# 钢珠检测：水管ROI亮度列扫描（球沿管一维运动 → 一维检测）
+# =========================================================================
+def detect_ball(gray_np, img_np):
+    """返回 (found, cx, cy, thr)；未找到 cx=-1"""
+    roi = gray_np[PIPE_Y1:PIPE_Y2, PIPE_X1:PIPE_X2]
+    mean = float(np.mean(roi))
+    std  = float(np.std(roi))
+    thr  = mean + THR_K * std
+    if thr < GRAY_FLOOR:
+        thr = GRAY_FLOOR
+
+    mask = roi > thr
+    col_counts = np.sum(mask, axis=0)
+    COL_MIN = max(3, BALL_H_MIN // 2)
+
+    best_cx = -1
+    best_score = 0
+    i = 0
+    n = ROI_W
+    while i < n:
+        if int(col_counts[i]) >= COL_MIN:
+            a = i
+            while i < n and int(col_counts[i]) >= COL_MIN:
+                i += 1
+            b = i - 1
+            w = b - a + 1
+            if w < BALL_W_MIN or w > BALL_W_MAX:
+                continue
+            seg = mask[:, a:b+1]
+            row_counts = np.sum(seg, axis=1)
+            row_need = max(2, w // 3)
+            h_extent = 0
+            for r in range(ROI_H):
+                if int(row_counts[r]) >= row_need:
+                    h_extent += 1
+            if h_extent < BALL_H_MIN:
+                continue
+            region = img_np[PIPE_Y1:PIPE_Y2, PIPE_X1+a:PIPE_X1+b+1]
+            mr = int(np.mean(region[:, :, 0]))
+            mb = int(np.mean(region[:, :, 2]))
+            if (mr - mb) > COLOR_RB_DIFF:
+                continue
+            total = 0
+            wsum = 0
+            for x in range(a, b+1):
+                c = int(col_counts[x])
+                total += c
+                wsum += c * x
+            if total <= 0:
+                continue
+            if total > best_score:
+                best_score = total
+                best_cx = wsum / total + PIPE_X1
+        else:
+            i += 1
+
+    if best_cx < 0:
+        return False, -1, -1, thr
+    return True, int(best_cx), (PIPE_Y1 + PIPE_Y2) // 2, thr
+
+# ---------------- 跟踪滤波 ----------------
+pos_hist = []
+last_pos_mm = -1.0
+lost_cnt = 0
+
+def track_filter(found, cx):
+    global last_pos_mm, lost_cnt
+    if not found:
+        lost_cnt += 1
+        if last_pos_mm >= 0 and lost_cnt <= HOLD_FRAMES:
+            return True, last_pos_mm
+        return False, -1.0
+    pos_mm = (cx - PIPE_X1) * PIPE_LEN_MM / ROI_W
+    if pos_mm < 0: pos_mm = 0
+    if pos_mm > PIPE_LEN_MM: pos_mm = PIPE_LEN_MM
+    if last_pos_mm >= 0 and abs(pos_mm - last_pos_mm) > JUMP_MM:
+        lost_cnt += 1
+        if lost_cnt <= HOLD_FRAMES:
+            return True, last_pos_mm
+        return False, -1.0
+    pos_hist.append(pos_mm)
+    if len(pos_hist) > MEDIAN_N:
+        pos_hist.pop(0)
+    s = sorted(pos_hist)
+    med = s[len(s) // 2]
+    last_pos_mm = med
+    lost_cnt = 0
+    return True, med
+
+# ---------------- UART（AA55校验帧） ----------------
+# AA 55 PH PL FLAG CHK 0D   POS=mm*10   FLAG:1有效/0丢失   CHK=(PH+PL+FLAG)&0xFF
+def uart_send(valid, pos_mm):
+    try:
+        val = int(pos_mm * 10) if valid else 0
+        if val < 0: val = 0
+        if val > 65535: val = 65535
+        ph = (val >> 8) & 0xFF
+        pl = val & 0xFF
+        flag = 1 if valid else 0
+        chk = (ph + pl + flag) & 0xFF
+        uart.write(bytearray([0xAA, 0x55, ph, pl, flag, chk, 0x0D]))
+    except Exception:
+        pass
+
+# =========================================================================
+# WiFi AP + 网页/推流服务（K230自建热点，已验证路径）
+# =========================================================================
+K230_IP = "0.0.0.0"
+
+def start_ap():
+    global K230_IP
+    ap = network.WLAN(network.AP_IF)
+    if not ap.active():
+        ap.active(True)
+    for kwargs in ({"ssid": AP_SSID, "key": AP_PASSWORD},
+                   {"ssid": AP_SSID, "password": AP_PASSWORD},
+                   {"essid": AP_SSID, "password": AP_PASSWORD}):
+        try:
+            ap.config(**kwargs)
+            break
+        except Exception:
+            continue
+    time.sleep_ms(1000)
+    K230_IP = ap.ifconfig()[0]
+    print("===============================")
+    print(" 热点: {} / {}".format(AP_SSID, AP_PASSWORD))
+    print(" K230_IP:", K230_IP)
+    print(" 浏览器: http://" + K230_IP + ":" + str(HTTP_PORT) + "/")
+    print("===============================")
+    try:
+        f = open("/sdcard/last_url.txt", "w")
+        f.write("热点: %s / %s\n浏览器: http://%s:%d/\n" % (AP_SSID, AP_PASSWORD, K230_IP, HTTP_PORT))
+        f.close()
+    except Exception:
+        pass
+    return ap
+
+def _send_all(sock, data):
+    view = memoryview(data)
+    total = len(view)
+    sent = 0
+    retry = 0
+    while sent < total:
+        end = min(sent + SEND_CHUNK, total)
+        try:
+            n = sock.send(view[sent:end])
+        except OSError as e:
+            code = e.args[0] if e.args else 0
+            if code in (11, 35):
+                retry += 1
+                if retry > 400:
+                    raise
+                time.sleep_ms(5)
+                continue
+            raise
+        if not n:
+            raise OSError("closed")
+        sent += n
+        retry = 0
+
+class MjpegHub:
+    def __init__(self):
+        self._lock = _thread.allocate_lock()
+        self._jpeg = None
+        self._seq = 0
+        self.connected = False      # 有客户端在拉流时为True（主循环据此决定是否编码）
+    def publish(self, jpeg):
+        self._lock.acquire()
+        try:
+            self._jpeg = jpeg
+            self._seq += 1
+        finally:
+            self._lock.release()
+    def fetch(self, last_seq):
+        self._lock.acquire()
+        try:
+            if self._seq == last_seq or self._jpeg is None:
+                return None, last_seq
+            return self._jpeg, self._seq
+        finally:
+            self._lock.release()
+    def latest(self):
+        self._lock.acquire()
+        try:
+            return self._jpeg
+        finally:
+            self._lock.release()
+
+hub = MjpegHub()
+
+HTML_PAGE = ("<!DOCTYPE html><html lang='zh'><head><meta charset='utf-8'>"
+"<meta name='viewport' content='width=device-width,initial-scale=1'>"
+"<title>K230 钢珠识别图传</title>"
+"<style>body{background:#000;color:#0f0;text-align:center;margin:0;font-family:sans-serif}"
+"img{max-width:100%;height:auto}"
+"button{padding:8px 14px;margin:6px;font-size:15px;border-radius:8px;border:1px solid #0f0;background:#111;color:#0f0}</style>"
+"</head><body>"
+"<h3>K230 钢珠识别图传</h3>"
+"<img id='st' src='/stream.mjpg'><br>"
+"<button onclick='startRec()'>● 录制</button>"
+"<button onclick='stopRec()'>■ 停止</button>"
+"<button onclick='snap()'>截图</button>"
+"<div id='msg' style='color:#888;font-size:13px'>录不了就用手机系统录屏</div>"
+"<script>"
+"var st=document.getElementById('st'),msg=document.getElementById('msg');"
+"var cv=document.createElement('canvas'),cx=cv.getContext('2d');"
+"var rec=null,chunks=[],recStream=null,draw=null,mime='';"
+"function startRec(){"
+"if(rec&&rec.state==='recording')return;"
+"if(!st.complete||st.naturalWidth===0){msg.textContent='画面未就绪';return}"
+"cv.width=st.naturalWidth;cv.height=st.naturalHeight;"
+"var ts=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];"
+"var opt={};for(var i=0;i<ts.length;i++){if(window.MediaRecorder&&MediaRecorder.isTypeSupported(ts[i])){opt={mimeType:ts[i]};mime=ts[i];break}}"
+"if(!window.MediaRecorder){msg.textContent='浏览器不支持录制，请用系统录屏';return}"
+"recStream=cv.captureStream(15);chunks=[];"
+"try{rec=new MediaRecorder(recStream,opt)}catch(e){rec=new MediaRecorder(recStream);mime='video/webm'}"
+"rec.ondataavailable=function(e){if(e.data&&e.data.size>0)chunks.push(e.data)};"
+"rec.onstop=function(){"
+"var ext=mime.indexOf('mp4')>=0?'mp4':'webm';"
+"var blob=new Blob(chunks,{type:mime||'video/webm'});"
+"var url=URL.createObjectURL(blob),a=document.createElement('a');"
+"a.href=url;a.download='k230_'+Date.now()+'.'+ext;a.click();"
+"setTimeout(function(){URL.revokeObjectURL(url)},1000);chunks=[];"
+"if(draw){clearInterval(draw);draw=null}"
+"if(recStream){recStream.getTracks().forEach(function(t){t.stop()});recStream=null}};"
+"draw=setInterval(function(){if(st.complete&&st.naturalWidth>0)cx.drawImage(st,0,0,cv.width,cv.height)},66);"
+"rec.start(200);msg.textContent='录制中...点停止保存'}"
+"function stopRec(){if(rec&&rec.state==='recording'){rec.stop();rec=null}msg.textContent='已保存到下载'}"
+"function snap(){var a=document.createElement('a');a.href='/snapshot?'+Date.now();a.download='k230_'+Date.now()+'.jpg';a.click()}"
+"window.addEventListener('beforeunload',function(){if(rec&&rec.state==='recording')rec.stop()});"
+"</script></body></html>").encode()
+
+def mjpeg_server():
+    server = socket.socket()
+    try:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    except Exception:
+        pass
+    server.bind(("0.0.0.0", HTTP_PORT))
+    server.listen(2)
+    print("[HTTP] 端口:", HTTP_PORT)
+    while True:
+        client = None
+        try:
+            client, addr = server.accept()
+            request = client.recv(512)
+            if b"/stream.mjpg" in request:
+                _send_all(client, b"HTTP/1.0 200 OK\r\nContent-Type: multipart/x-mixed-replace; boundary=frame\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n")
+                hub.connected = True
+                last_seq = 0
+                print("[HTTP] 客户端:", addr)
+                while True:
+                    jpeg, seq = hub.fetch(last_seq)
+                    if jpeg is None:
+                        time.sleep_ms(10)
+                        os.exitpoint()
+                        continue
+                    last_seq = seq
+                    _send_all(client, ("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {}\r\n\r\n".format(len(jpeg))).encode())
+                    _send_all(client, jpeg)
+                    _send_all(client, b"\r\n")
+                    os.exitpoint()
+            elif b"/snapshot" in request:
+                jpeg = hub.latest()
+                if jpeg is None:
+                    _send_all(client, b"HTTP/1.0 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                else:
+                    _send_all(client, ("HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: {}\r\nConnection: close\r\n\r\n".format(len(jpeg))).encode())
+                    _send_all(client, jpeg)
+                client.close()
+                client = None
+            else:
+                _send_all(client, ("HTTP/1.0 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n".format(len(HTML_PAGE))).encode())
+                _send_all(client, HTML_PAGE)
+                client.close()
+                client = None
+        except Exception:
+            pass
+        finally:
+            hub.connected = False
+            if client:
+                try:
+                    client.close()
+                except Exception:
+                    pass
+
+def encode_jpeg(img):
+    """编码JPEG并bytes拷贝（编码结果指向VB缓存，下一帧会覆盖）"""
+    try:
+        encoded = img.compressed(quality=JPEG_QUALITY)
+    except Exception:
+        encoded = img.compress(quality=JPEG_QUALITY)
+    if encoded is None:
+        return None
+    return bytes(encoded.bytearray())
+
+# =========================================================================
+# 主程序
+# =========================================================================
+print("===============================")
+print(" K230 钢珠识别+图传 最终版")
+print("===============================")
+
+ap = start_ap()
+_thread.stack_size(64 * 1024)
+_thread.start_new_thread(mjpeg_server, ())
+
+frame = 0
+stream_counter = 0
+gc_counter = 0
+t_send = time.ticks_ms()
+t_fps  = time.ticks_ms()
+
+try:
+    while True:
+        os.exitpoint()
+        img = sensor.snapshot()
+        if img is None:
+            time.sleep_ms(5)
+            continue
+        frame += 1
+
+        img_np = img.to_numpy_ref()
+        gray_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+
+        # ---- 检测（单帧异常不崩溃）----
+        found = False
+        cx = -1
+        cy = -1
+        thr = 0
+        try:
+            found, cx, cy, thr = detect_ball(gray_np, img_np)
+        except Exception as e:
+            print("[DET]", e)
+
+        valid, pos_mm = track_filter(found, cx)
+
+        # ---- UART 定时发位置 ----
+        now = time.ticks_ms()
+        if time.ticks_diff(now, t_send) >= SEND_PERIOD_MS:
+            t_send = now
+            uart_send(valid, pos_mm)
+
+        # ---- 画面标注（绿框=锁定 红框=丢失 蓝十字=球心）----
+        band_color = (0, 255, 0) if (valid and found) else (255, 0, 0)
+        img.draw_rectangle(PIPE_X1, PIPE_Y1, ROI_W, ROI_H, color=band_color, thickness=2)
+        if valid and pos_mm >= 0:
+            bx = int(PIPE_X1 + pos_mm / PIPE_LEN_MM * ROI_W)
+            img.draw_line(bx - 10, cy, bx + 10, cy, color=(0, 0, 255), thickness=2)
+            img.draw_line(bx, cy - 10, bx, cy + 10, color=(0, 0, 255), thickness=2)
+
+        # ---- 推流（有客户端才编码，无人观看零开销）----
+        if hub.connected:
+            stream_counter += 1
+            if stream_counter >= STREAM_EVERY_N:
+                stream_counter = 0
+                try:
+                    j = encode_jpeg(img)
+                    if j is not None:
+                        hub.publish(j)
+                except Exception as e:
+                    print("[JPG]", e)
+
+        if DEBUG_DISPLAY:
+            try:
+                Display.show_image(img, x=80, y=0)
+            except Exception:
+                pass
+
+        del img_np
+
+        # ---- 状态打印 ----
+        if frame % PRINT_EVERY == 0:
+            fps = PRINT_EVERY * 1000 / max(1, time.ticks_diff(now, t_fps))
+            t_fps = now
+            if valid and found:
+                print("=> {:.0f}fps BALL cx_raw={} pos={:.1f}mm thr={:.0f}".format(fps, cx, pos_mm, thr))
+            elif valid:
+                print("=> {:.0f}fps HOLD pos={:.1f}mm".format(fps, pos_mm))
+            else:
+                print("=> {:.0f}fps LOST thr={:.0f}".format(fps, thr))
+
+        gc_counter += 1
+        if gc_counter >= 60:
+            gc_counter = 0
+            gc.collect()
+
+except KeyboardInterrupt:
+    pass
+except Exception as e:
+    print("异常:", e)
+finally:
+    try:
+        sensor.stop()
+    except Exception:
+        pass
+    try:
+        MediaManager.deinit()
+    except Exception:
+        pass

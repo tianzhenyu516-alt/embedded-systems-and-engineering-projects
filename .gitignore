@@ -19,7 +19,6 @@ Objects/
 *.dep
 *.htm
 *.lnp
-*.sct
 JLinkLog.txt
 JLinkSettings.ini
 *.dbgconf
@@ -48,26 +47,27 @@ Thumbs.db
 # 后续项目的本地配置与依赖
 .env
 .env.*
+!.env.example
 node_modules/
 __pycache__/
 *.pyc
 
 # 三子棋工程随附的 CMSIS 示例与测试代码
-SZQ/src/1-6ALL/Drivers/CMSIS/DSP/
-SZQ/src/1-6ALL/Drivers/CMSIS/NN/
-SZQ/src/1-6ALL/Drivers/CMSIS/Core_A/
-SZQ/src/1-6ALL/Drivers/CMSIS/RTOS/
-SZQ/src/1-6ALL/Drivers/CMSIS/RTOS2/
+2024年电子设计竞赛三子棋/src/1-6ALL/Drivers/CMSIS/DSP/
+2024年电子设计竞赛三子棋/src/1-6ALL/Drivers/CMSIS/NN/
+2024年电子设计竞赛三子棋/src/1-6ALL/Drivers/CMSIS/Core_A/
+2024年电子设计竞赛三子棋/src/1-6ALL/Drivers/CMSIS/RTOS/
+2024年电子设计竞赛三子棋/src/1-6ALL/Drivers/CMSIS/RTOS2/
 
 # 原工程缺少相应许可文件的第三方模块
-26电赛/src/f103c8t6/app/MPU6050/eMPL/
-26电赛/src/mspm0g3507/driver/binary.h
+2026年电子设计竞赛/src/f103c8t6/app/MPU6050/eMPL/
+2026年电子设计竞赛/src/mspm0g3507/driver/binary.h
 四自由度履带机器人自动捡球寻迹案例/src/
-26电赛/src/mspm0g3507/driver/ssd1306.c
-26电赛/src/f103c8t6/app/MPU6050/mpu6050.h
-26电赛/src/f103c8t6/app/MPU6050/mpuiic.h
-26电赛/src/f103c8t6/app/MPU6050/sys.c
-26电赛/src/f103c8t6/app/MPU6050/mpuiic.c
+2026年电子设计竞赛/src/mspm0g3507/driver/ssd1306.c
+2026年电子设计竞赛/src/f103c8t6/app/MPU6050/mpu6050.h
+2026年电子设计竞赛/src/f103c8t6/app/MPU6050/mpuiic.h
+2026年电子设计竞赛/src/f103c8t6/app/MPU6050/sys.c
+2026年电子设计竞赛/src/f103c8t6/app/MPU6050/mpuiic.c
 基于STM32的农业大棚监测/src/User/key/key.c
 基于STM32的心电采集系统/src/USER/malloc.c
 基于STM32的心电采集系统/src/USER/malloc.h

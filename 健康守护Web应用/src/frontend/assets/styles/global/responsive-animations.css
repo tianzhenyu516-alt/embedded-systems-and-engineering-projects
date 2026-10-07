@@ -1,0 +1,844 @@
+/* ============================================
+   通用响应式与动画增强样式
+   适用于所有前端系统
+   提供完整的 PC 端与移动端适配
+   ============================================ */
+
+/* ============================================
+   响应式断点系统
+   ============================================ */
+
+:root {
+    /* 断点定义 */
+    --breakpoint-xs: 0px; /* 小屏手机 */
+    --breakpoint-sm: 576px; /* 大屏手机 */
+    --breakpoint-md: 768px; /* 平板 */
+    --breakpoint-lg: 1024px; /* 小屏电脑 */
+    --breakpoint-xl: 1440px; /* 大屏电脑 */
+    --breakpoint-2xl: 1920px; /* 超大屏 */
+
+    /* 容器最大宽度 */
+    --container-max-width-sm: 540px;
+    --container-max-width-md: 720px;
+    --container-max-width-lg: 960px;
+    --container-max-width-xl: 1200px;
+    --container-max-width-2xl: 1400px;
+}
+
+/* ============================================
+   响应式容器
+   ============================================ */
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: var(--container-max-width-sm);
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: var(--container-max-width-md);
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: var(--container-max-width-lg);
+        padding: 0 28px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container {
+        max-width: var(--container-max-width-2xl);
+        padding: 0 32px;
+    }
+}
+
+/* ============================================
+   响应式网格系统
+   ============================================ */
+
+.grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 576px) {
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .grid-cols-2-sm {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .grid-cols-2-md {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-cols-3-md {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-cols-3-lg {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-cols-4-lg {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1440px) {
+    .grid-cols-4-xl {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid-cols-6-xl {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+/* ============================================
+   响应式间距系统
+   ============================================ */
+
+/* 内边距 */
+@media (max-width: 576px) {
+    .p-mobile-sm {
+        padding: 8px;
+    }
+    .p-mobile-md {
+        padding: 12px;
+    }
+    .p-mobile-lg {
+        padding: 16px;
+    }
+    .px-mobile {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .py-mobile {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+@media (min-width: 768px) {
+    .p-tablet-sm {
+        padding: 12px;
+    }
+    .p-tablet-md {
+        padding: 16px;
+    }
+    .p-tablet-lg {
+        padding: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .p-desktop-sm {
+        padding: 16px;
+    }
+    .p-desktop-md {
+        padding: 24px;
+    }
+    .p-desktop-lg {
+        padding: 32px;
+    }
+}
+
+/* 外边距 */
+@media (max-width: 576px) {
+    .m-mobile-sm {
+        margin: 8px;
+    }
+    .m-mobile-md {
+        margin: 12px;
+    }
+    .m-mobile-lg {
+        margin: 16px;
+    }
+    .mb-mobile {
+        margin-bottom: 16px;
+    }
+    .mt-mobile {
+        margin-top: 16px;
+    }
+}
+
+/* ============================================
+   响应式字体大小
+   ============================================ */
+
+.text-responsive-xs {
+    font-size: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .text-responsive-xs {
+        font-size: 0.875rem;
+    }
+}
+
+.text-responsive-sm {
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .text-responsive-sm {
+        font-size: 1rem;
+    }
+}
+
+.text-responsive-base {
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    .text-responsive-base {
+        font-size: 1.125rem;
+    }
+}
+
+.text-responsive-lg {
+    font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .text-responsive-lg {
+        font-size: 1.5rem;
+    }
+}
+
+.text-responsive-xl {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .text-responsive-xl {
+        font-size: 1.875rem;
+    }
+}
+
+/* ============================================
+   响应式显示控制
+   ============================================ */
+
+/* 隐藏元素 */
+@media (max-width: 576px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .hide-tablet {
+        display: none !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .hide-desktop {
+        display: none !important;
+    }
+}
+
+/* 仅显示特定设备 */
+@media (max-width: 576px) {
+    .show-mobile-only {
+        display: block !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .show-tablet-only {
+        display: block !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .show-desktop-only {
+        display: block !important;
+    }
+}
+
+/* ============================================
+   现代化动画效果库
+   ============================================ */
+
+/* 淡入动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 缩放动画 */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes scaleInUp {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 弹跳动画 */
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 旋转动画 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinReverse {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulseGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(22, 93, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(22, 93, 255, 0.6);
+    }
+}
+
+/* 滑动动画 */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* 摇摆动画 */
+@keyframes swing {
+    20% {
+        transform: rotate(15deg);
+    }
+    40% {
+        transform: rotate(-10deg);
+    }
+    60% {
+        transform: rotate(5deg);
+    }
+    80% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* 悬浮动画 */
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes floatSlow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* 闪烁动画 */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* 心跳动画 */
+@keyframes heartbeat {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    14% {
+        transform: scale(1.15);
+    }
+    28% {
+        transform: scale(1);
+    }
+    42% {
+        transform: scale(1.15);
+    }
+    70% {
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   动画工具类
+   ============================================ */
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease;
+}
+
+.animate-fade-in-down {
+    animation: fadeInDown 0.5s ease;
+}
+
+.animate-fade-in-left {
+    animation: fadeInLeft 0.5s ease;
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.5s ease;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.4s ease;
+}
+
+.animate-scale-in-up {
+    animation: scaleInUp 0.5s ease;
+}
+
+.animate-bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-bounce {
+    animation: bounce 1s ease infinite;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-slow {
+    animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-swing {
+    animation: swing 1s ease;
+}
+
+.animate-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.animate-heartbeat {
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   动画延迟类
+   ============================================ */
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+/* ============================================
+   过渡效果
+   ============================================ */
+
+.transition-all {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-fast {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-base {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-slow {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-transform {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-opacity {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-shadow {
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   悬停效果
+   ============================================ */
+
+.hover-lift {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-grow {
+    transition: transform 0.2s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.1);
+}
+
+.hover-rotate {
+    transition: transform 0.3s ease;
+}
+
+.hover-rotate:hover {
+    transform: rotate(5deg);
+}
+
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 30px rgba(22, 93, 255, 0.4);
+}
+
+/* ============================================
+   骨架屏加载
+   ============================================ */
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 8px;
+}
+
+.skeleton-title {
+    height: 24px;
+    margin-bottom: 12px;
+}
+
+.skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.skeleton-image {
+    height: 200px;
+    width: 100%;
+}
+
+/* ============================================
+   滚动条美化
+   ============================================ */
+
+/* Webkit 浏览器 */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    border-radius: 10px;
+    border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+/* ============================================
+   可访问性优化
+   ============================================ */
+
+/* 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .btn,
+    input,
+    select,
+    textarea,
+    a {
+        border-width: 2px !important;
+    }
+}
+
+/* 焦点增强 */
+:focus-visible {
+    outline: 3px solid rgba(22, 93, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   打印样式
+   ============================================ */
+
+@media print {
+    .no-print,
+    .navbar,
+    .btn,
+    .modal,
+    .notification,
+    .sidebar {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+    }
+
+    .card,
+    .status-card {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
+
+/* ============================================
+   性能优化提示
+   ============================================ */
+
+/* 使用 will-change 优化动画性能 */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+.will-change-auto {
+    will-change: auto;
+}
+
+/* 硬件加速 */
+.hardware-accel {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}

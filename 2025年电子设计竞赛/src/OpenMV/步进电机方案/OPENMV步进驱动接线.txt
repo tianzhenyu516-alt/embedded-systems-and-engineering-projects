@@ -1,0 +1,6 @@
+电机1 P7→ST2  P8→DIR2  motroB
+电机2 P9→ST1  P6→DIR1 motroA
+EN1 EN2 接电机驱动的 3.3V
+OPenMV的GND 接 电机驱动的GND
+OPenMV的5V  接 电机驱动的5V
+P5→TI板子的TX A21

@@ -1,0 +1,32 @@
+{
+    "name": "health-guardian-frontend",
+    "version": "2.3.0",
+    "description": "健康守护 - AI智能健康管理平台 - 前端应用",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "dev": "node server.js",
+        "start": "node server.js"
+    },
+    "keywords": [
+        "health",
+        "ai",
+        "fitbit",
+        "medical",
+        "healthcare",
+        "wellness",
+        "frontend"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "compression": "^1.7.4",
+        "dotenv": "^17.4.2",
+        "express": "^4.18.2",
+        "http-proxy-middleware": "^2.0.6"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=9.0.0"
+    }
+}

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="健康守护设备连接中心，管理 Fitbit、涂鸦等智能设备接入与同步。" />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://www.example.invalid/views/user/dashboard/device-connection.html" />
+        <title>设备连接 - 健康守护</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="stylesheet" href="/assets/styles/user/styles.css" />
+        <script src="/utils/common/page-scroll-manager.js"></script>
+    </head>
+    <body>
+        <script src="/router/common/auth-guard.js"></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('user');
+                }
+
+                initUserAvatar();
+            });
+
+            function getLatestUserAvatar() {
+                try {
+                    const loginInfo = JSON.parse(sessionStorage.getItem('loginInfo') || '{}');
+                    const currentUser = loginInfo.user || {};
+
+                    if (currentUser.avatar) {
+                        return currentUser.avatar;
+                    }
+
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+                    const accountUsers = Array.isArray(accounts.user) ? accounts.user : [];
+                    const matcher = user =>
+                        user && (user.id === currentUser.id || user.username === currentUser.username);
+
+                    const matchedUser = users.find(matcher) || accountUsers.find(matcher);
+                    return matchedUser && matchedUser.avatar ? matchedUser.avatar : '';
+                } catch (error) {
+                    console.error('读取用户头像失败:', error);
+                    return '';
+                }
+            }
+
+            function applyUserAvatar(avatar) {
+                const avatarElement = document.querySelector('.avatar');
+                if (!avatarElement || !avatar) {
+                    return;
+                }
+
+                avatarElement.style.backgroundImage = `url(${avatar})`;
+            }
+
+            function initUserAvatar() {
+                applyUserAvatar(getLatestUserAvatar());
+
+                window.addEventListener('storage', function (event) {
+                    if (event.key === 'avatarUpdate' && event.newValue) {
+                        try {
+                            const payload = JSON.parse(event.newValue);
+                            applyUserAvatar(payload.avatar || '');
+                        } catch (error) {
+                            console.error('同步头像更新失败:', error);
+                        }
+                    }
+                });
+
+                if (typeof BroadcastChannel !== 'undefined') {
+                    const channel = new BroadcastChannel('avatar_sync');
+                    channel.addEventListener('message', function (event) {
+                        if (event.data && event.data.type === 'AVATAR_UPDATED') {
+                            applyUserAvatar(event.data.avatar || '');
+                        }
+                    });
+                }
+            }
+
+            window.logout = function() {
+                if (confirm('确定要退出登录吗？')) {
+                    if (window.AuthGuard) {
+                        AuthGuard.logout();
+                    }
+                }
+            };
+        </script>
+        <nav id="navbar" class="navbar navbar-with-back">
+            <div class="navbar-back-container">
+                <button class="back-button" onclick="window.location.href = '/views/user/dashboard/index.html'" aria-label="返回首页">
+                    <span class="back-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </span>
+                    返回
+                </button>
+                <span class="page-title">设备连接</span>
+                <div class="avatar-container">
+                    <button id="avatar-button" class="avatar-button">
+                        <div class="avatar"></div>
+                    </button>
+                    <div id="avatar-menu" class="avatar-menu">
+                        <button class="menu-item" onclick="window.location.href = '/views/user/dashboard/settings.html'">设置</button>
+                        <button class="menu-item" onclick="window.location.href = '/views/user/dashboard/device-connection.html'">
+                            设备连接
+                        </button>
+                        <button class="menu-item" onclick="logout()">退出登录</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main id="content" class="content">
+            <div class="status-card">
+                <h2>设备连接管理</h2>
+                <div class="device-section">
+                    <h3>选择设备类型</h3>
+                    <div class="device-types-container" id="device-types">
+                        <div class="device-type-card" data-device-type="fitbit">
+                            <div class="device-type-icon" style="background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitbit%20fitness%20tracker%20bracelet&image_size=square')"></div>
+                            <div class="device-type-name">Fitbit手环</div>
+                            <div class="device-type-description">连接Fitbit手环，获取健康数据</div>
+                            <div class="device-type-action">点击选择</div>
+                        </div>
+                        <div class="device-type-card" data-device-type="tuya">
+                            <div class="device-type-icon" style="background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=tuya%20smart%20home%20device&image_size=square')"></div>
+                            <div class="device-type-name">涂鸦智能设备</div>
+                            <div class="device-type-description">连接涂鸦智能设备，控制智能家居</div>
+                            <div class="device-type-action">点击选择</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            document.getElementById('avatar-button').addEventListener('click', function (e) {
+                e.stopPropagation();
+                document.getElementById('avatar-menu').classList.toggle('show');
+            });
+
+            document.addEventListener('click', function () {
+                document.getElementById('avatar-menu').classList.remove('show');
+            });
+
+            document.getElementById('avatar-menu').addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+            document.querySelectorAll('.device-type-card').forEach(function(card) {
+                card.addEventListener('click', function() {
+                    const deviceType = card.getAttribute('data-device-type');
+                    if (deviceType === 'fitbit') {
+                        window.location.href = '/views/user/dashboard/fitbit-connection.html';
+                    } else if (deviceType === 'tuya') {
+                        window.location.href = '/views/user/dashboard/tuya-connection.html';
+                    }
+                });
+            });
+        </script>
+
+        <style>
+            .device-types-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+
+            .device-type-card {
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                padding: 24px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background-color: #fff;
+            }
+
+            .device-type-card:hover {
+                border-color: #007aff;
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0, 122, 255, 0.15);
+            }
+
+            .device-type-icon {
+                width: 80px;
+                height: 80px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                margin: 0 auto 16px;
+                border-radius: 12px;
+            }
+
+            .device-type-name {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .device-type-description {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 16px;
+            }
+
+            .device-type-action {
+                display: inline-block;
+                background-color: #007aff;
+                color: white;
+                padding: 8px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .device-type-card:hover .device-type-action {
+                background-color: #0056b3;
+            }
+        </style>
+    </body>
+</html>

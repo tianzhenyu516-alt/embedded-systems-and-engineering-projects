@@ -1,0 +1,2235 @@
+/**
+ * 在线医院模块主样式文件
+ * 实现响应式布局和UI设计
+ */
+
+/* 全局样式 */
+:root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary-color: #10b981;
+    --secondary-hover: #059669;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --warning-color: #f59e0b;
+    --warning-hover: #d97706;
+    --info-color: #06b6d4;
+    --info-hover: #0891b2;
+    --text-color: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --border-color: #e5e7eb;
+    --bg-color: #f9fafb;
+    --card-bg: #ffffff;
+    --card-hover: #f8fafc;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    --transition: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+/* 容器 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 标题 */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-color);
+}
+
+h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+/* 按钮 */
+button {
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow:
+        0 1px 3px 0 rgba(59, 130, 246, 0.2),
+        0 1px 2px 0 rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+button.primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+button.primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #fff;
+}
+
+button.danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+}
+
+button.danger:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+    color: #fff;
+}
+
+/* 输入框 */
+input,
+select,
+textarea {
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    transform: translateY(-1px);
+}
+
+/* 医院列表 */
+.hospital-list {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.hospital-list__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.hospital-list__search {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    gap: 8px;
+}
+
+.hospital-list__search input {
+    flex: 1;
+}
+
+.hospital-list__filters {
+    display: flex;
+    gap: 12px;
+}
+
+.hospital-list__sort {
+    display: flex;
+    gap: 8px;
+}
+
+.hospital-list__sort button.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.hospital-list__content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.hospital-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 18px;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.hospital-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.hospital-card__identity {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.hospital-card__avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(6, 182, 212, 0.18));
+    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding: 8px;
+}
+
+.hospital-card__avatar-name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.2;
+    word-break: break-all;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.hospital-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hospital-card__identity-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.hospital-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.hospital-card__name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.hospital-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hospital-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hospital-card__level {
+    background-color: var(--info-color);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.hospital-card__info {
+    margin-bottom: 0;
+}
+
+.hospital-card__address {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.hospital-card__meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.hospital-card__distance {
+    color: var(--primary-color);
+}
+
+.hospital-card__rating {
+    color: var(--warning-color);
+}
+
+.hospital-card__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hospital-card__feature {
+    background-color: #f0f5ff;
+    color: var(--primary-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.hospital-card__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.hospital-card__btn {
+    flex: 1;
+    text-align: center;
+}
+
+.hospital-card__btn--appointment {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.hospital-card__btn--appointment:hover {
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+/* 预约表单 */
+.appointment-form {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.appointment-form__error {
+    background-color: #fff1f0;
+    color: var(--danger-color);
+    padding: 12px;
+    border-radius: var(--border-radius);
+    margin-bottom: 16px;
+    border-left: 4px solid var(--danger-color);
+}
+
+.appointment-form__section {
+    margin-bottom: 24px;
+}
+
+.appointment-form__field {
+    margin-bottom: 16px;
+}
+
+.appointment-form__field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.appointment-form__field input,
+.appointment-form__field select,
+.appointment-form__field textarea {
+    width: 100%;
+}
+
+.appointment-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.appointment-form__btn--cancel {
+    border-color: var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.appointment-form__btn--submit {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.appointment-form__confirmation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.appointment-form__confirmation-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    max-width: 400px;
+    width: 90%;
+}
+
+.appointment-form__confirmation-info {
+    margin-bottom: 20px;
+}
+
+.appointment-form__confirmation-info p {
+    margin-bottom: 8px;
+}
+
+.appointment-form__confirmation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* 咨询聊天 */
+.consultation-chat {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: 650px;
+    max-width: 850px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* 医院选择 */
+.hospital-selection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+}
+
+.selection-header {
+    margin-bottom: 24px;
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.selection-header h4 {
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.selection-header p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin: 0;
+}
+
+.hospital-selection-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hospital-selection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition);
+    cursor: pointer;
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.hospital-selection-item:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.hospital-selection-info {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.hospital-selection-info h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+.hospital-selection-address {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.hospital-selection-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    flex-wrap: wrap;
+}
+
+.hospital-selection-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    background-color: var(--card-hover);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.hospital-selection-meta .distance {
+    color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.hospital-selection-meta .rating {
+    color: var(--warning-color);
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.hospital-selection-meta .level {
+    color: var(--info-color);
+    background-color: rgba(6, 182, 212, 0.1);
+}
+
+.hospital-selection-departments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.hospital-selection-departments .department-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.hospital-selection-action {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 8px;
+}
+
+.hospital-selection-action .feature-button {
+    padding: 10px 24px;
+    font-weight: 500;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.hospital-selection-action .feature-button:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.chat-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chat-hospital-name {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.consultation-chat__header {
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background:
+        radial-gradient(circle at top right, rgba(191, 219, 254, 0.18), transparent 24%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.99) 0%, rgba(244, 249, 255, 0.99) 100%);
+    backdrop-filter: blur(12px);
+}
+
+.consultation-chat__info-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.consultation-chat__hospital-avatar,
+.consultation-chat__message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1677ff 0%, #60a5fa 100%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    transition: transform 0.2s ease;
+}
+
+.consultation-chat__hospital-avatar:hover,
+.consultation-chat__message-avatar:hover {
+    transform: translateY(-1px);
+}
+
+.consultation-chat__hospital-avatar img,
+.consultation-chat__message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.consultation-chat__info p {
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.consultation-chat__status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.consultation-chat__status--connecting {
+    background-color: #fff7e6;
+    color: var(--warning-color);
+}
+
+.consultation-chat__status--consulting {
+    background-color: #f6ffed;
+    color: var(--secondary-color);
+}
+
+.consultation-chat__status--completed {
+    background-color: #f0f5ff;
+    color: var(--primary-color);
+}
+
+.consultation-chat__end-btn {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+}
+
+.consultation-chat__messages {
+    flex: 1;
+    padding: 24px 22px 28px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background:
+        linear-gradient(180deg, rgba(248, 251, 255, 0.96) 0%, rgba(255, 255, 255, 1) 100%),
+        repeating-linear-gradient(0deg, rgba(59, 130, 246, 0.02) 0 1px, transparent 1px 32px);
+}
+
+.consultation-chat__message {
+    max-width: min(78%, 720px);
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    animation: messageSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom center;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.consultation-chat__message-body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.consultation-chat__message--user {
+    align-self: flex-end;
+    margin-left: auto;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.consultation-chat__message--user,
+.consultation-chat__message--hospital {
+    width: fit-content;
+}
+
+.consultation-chat__message--user .consultation-chat__message-avatar {
+    order: 2;
+}
+
+.consultation-chat__message--user .consultation-chat__message-body {
+    order: 1;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.consultation-chat__message--hospital {
+    align-self: flex-start;
+    justify-content: flex-start;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-avatar {
+    order: 1;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-body {
+    order: 2;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.consultation-chat__message-content {
+    padding: 12px 14px;
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.consultation-chat__message-content:hover {
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.consultation-chat__message--user .consultation-chat__message-content {
+    background: #95ec69;
+    color: #111111;
+    border-top-right-radius: 6px;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-content {
+    background: #ffffff;
+    color: #1f2937;
+    border-top-left-radius: 6px;
+    border: 1px solid #e6e6e6;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-content::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 14px;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border-left: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+    transform: rotate(45deg);
+    border-bottom-left-radius: 3px;
+}
+
+.consultation-chat__message-sender {
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-sender::before {
+    content: '医院回复';
+    display: inline-flex;
+    align-items: center;
+    margin-right: 6px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(22, 93, 255, 0.08);
+    color: #165dff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+}
+
+.consultation-chat__message--user .consultation-chat__message-sender {
+    align-self: flex-end;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.consultation-chat__message-time {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    margin-left: auto;
+    padding: 0 2px;
+    border-radius: 0;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.45);
+    text-align: right;
+    font-weight: 500;
+    background: transparent;
+}
+
+.consultation-chat__message--user .consultation-chat__message-time {
+    color: rgba(0, 0, 0, 0.45);
+    background: transparent;
+    margin-left: auto;
+}
+
+.consultation-chat__message--hospital .consultation-chat__message-time {
+    margin-right: auto;
+}
+
+.consultation-chat__message-image {
+    max-width: 240px;
+    border-radius: 14px;
+    display: block;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.consultation-chat__message-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #165dff 0%, #3b82f6 100%);
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.consultation-chat__input {
+    padding: 16px 18px 18px;
+    border-top: 1px solid rgba(59, 130, 246, 0.08);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    position: relative;
+}
+
+.consultation-chat__messages {
+    overscroll-behavior: contain;
+    scroll-padding-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .consultation-chat {
+        height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+    }
+
+    .consultation-chat__header {
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .consultation-chat__messages {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .consultation-chat__input {
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .consultation-chat__message,
+    .consultation-history__detail-message {
+        max-width: 92%;
+    }
+
+    .consultation-chat__message-content {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .consultation-chat__hospital-avatar,
+    .consultation-chat__message-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .consultation-chat__input input {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .consultation-chat__input-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .consultation-history__item,
+    .hospital-card__identity {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .consultation-chat__header {
+        padding: 12px;
+    }
+
+    .consultation-chat__messages {
+        padding: 12px;
+        gap: 14px;
+    }
+
+    .consultation-chat__input {
+        padding: 12px;
+    }
+
+    .consultation-chat__message,
+    .consultation-history__detail-message {
+        max-width: 95%;
+    }
+}
+
+.consultation-chat__input-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.consultation-chat__input-btn {
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 19px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.08);
+}
+
+.consultation-chat__input-btn:hover {
+    border-color: #3b82f6;
+    color: #165dff;
+    background-color: rgba(59, 130, 246, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(59, 130, 246, 0.16);
+}
+
+.consultation-chat__input-btn:active {
+    transform: translateY(0);
+}
+
+.consultation-chat__input-btn input {
+    display: none;
+}
+
+.consultation-chat__input input {
+    flex: 1;
+    height: 50px;
+    padding: 0 18px;
+    border: 1.5px solid rgba(59, 130, 246, 0.12);
+    border-radius: 18px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s ease;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.consultation-chat__input input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.consultation-chat__input button:not(.consultation-chat__input-btn):not(.consultation-chat__rating-star) {
+    min-width: 92px;
+    height: 48px;
+    border-radius: 16px;
+    border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1677ff 0%, #3b82f6 100%);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+.consultation-chat__input button:not(.consultation-chat__input-btn):not(.consultation-chat__rating-star):hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+}
+
+.consultation-chat__input button:not(.consultation-chat__input-btn):not(.consultation-chat__rating-star):disabled {
+    opacity: 0.65;
+    background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    box-shadow: none;
+}
+
+.consultation-chat {
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top right, rgba(191, 219, 254, 0.2), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
+    box-shadow: 0 18px 42px rgba(59, 130, 246, 0.12);
+}
+
+.consultation-chat__empty,
+.consultation-chat__loading,
+.consultation-chat__error {
+    margin: auto;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.consultation-chat__empty,
+.consultation-chat__loading {
+    color: #5f6b7a;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.consultation-chat__error {
+    color: #d14343;
+    background: rgba(255, 77, 79, 0.08);
+    border: 1px solid rgba(255, 77, 79, 0.14);
+    margin: 12px 16px 0;
+}
+
+.consultation-chat__input input::placeholder {
+    color: #9ca3af;
+}
+
+.consultation-chat__rating {
+    padding: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.consultation-chat__rating-stars {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.consultation-chat__rating-star {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #d9d9d9;
+    transition: var(--transition);
+}
+
+.consultation-chat__rating-star.active {
+    color: var(--warning-color);
+}
+
+.consultation-chat__rating-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* 咨询历史 */
+.consultation-history {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.consultation-history__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.consultation-history__search {
+    flex: 1;
+    min-width: 200px;
+}
+
+.consultation-history__search input {
+    width: 100%;
+}
+
+.consultation-history__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.consultation-history__item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 18px;
+    transition: var(--transition);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.consultation-history__item-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(6, 182, 212, 0.18));
+    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.consultation-history__item-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.consultation-history__item-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.consultation-history__item:hover {
+    box-shadow: var(--shadow);
+}
+
+.consultation-history__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.consultation-history__item-header h3 {
+    margin-bottom: 4px;
+}
+
+.consultation-history__item-meta {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.consultation-history__item-time {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.consultation-history__item-info {
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.consultation-history__item-info p {
+    margin-bottom: 4px;
+}
+
+.consultation-history__item-summary {
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.consultation-history__detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.consultation-history__detail-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.consultation-history__detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.consultation-history__detail-info {
+    margin-bottom: 24px;
+    font-size: 13px;
+}
+
+.consultation-history__detail-info p {
+    margin-bottom: 8px;
+}
+
+.consultation-history__detail-messages {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.consultation-history__detail-message {
+    max-width: 80%;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.consultation-history__detail-message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(6, 182, 212, 0.18));
+    color: var(--primary-color);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.consultation-history__detail-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.consultation-history__detail-message-body {
+    min-width: 0;
+}
+
+.consultation-history__detail-message--user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.consultation-history__detail-message--hospital {
+    margin-right: auto;
+}
+
+.consultation-history__detail-message-content {
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    position: relative;
+}
+
+.consultation-history__detail-message--user .consultation-history__detail-message-content {
+    background-color: #e6f7ff;
+    color: var(--text-color);
+    border-bottom-right-radius: 4px;
+}
+
+.consultation-history__detail-message--hospital .consultation-history__detail-message-content {
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    border-bottom-left-radius: 4px;
+}
+
+.consultation-history__detail-message-sender {
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.consultation-history__detail-message-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    display: block;
+    text-align: right;
+}
+
+.consultation-history__detail-message-image {
+    max-width: 200px;
+    border-radius: var(--border-radius);
+}
+
+.consultation-history__detail-message-file {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* 预约记录 */
+.appointment-records {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.appointment-records__tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.appointment-records__tab {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.appointment-records__tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.appointment-records__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.appointment-records__item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    transition: var(--transition);
+}
+
+.appointment-records__item:hover {
+    box-shadow: var(--shadow);
+}
+
+.appointment-records__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.appointment-records__item-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.appointment-records__item-status--pending {
+    background-color: #fff7e6;
+    color: var(--warning-color);
+}
+
+.appointment-records__item-status--confirmed {
+    background-color: #f6ffed;
+    color: var(--secondary-color);
+}
+
+.appointment-records__item-status--completed {
+    background-color: #f0f5ff;
+    color: var(--primary-color);
+}
+
+.appointment-records__item-status--cancelled {
+    background-color: #fff1f0;
+    color: var(--danger-color);
+}
+
+.appointment-records__item-info {
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.appointment-records__item-info p {
+    margin-bottom: 4px;
+}
+
+.appointment-records__item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.appointment-records__btn--reschedule {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.appointment-records__btn--cancel {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.appointment-records__reschedule-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.appointment-records__reschedule-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    max-width: 400px;
+    width: 90%;
+}
+
+.appointment-records__reschedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.appointment-records__reschedule-field {
+    margin-bottom: 16px;
+}
+
+.appointment-records__reschedule-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.appointment-records__reschedule-field input {
+    width: 100%;
+}
+
+.appointment-records__reschedule-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* 模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+}
+
+.filter-section h4 {
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.filter-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.filter-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* 通知中心 */
+.notification-center {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    background-color: var(--card-bg);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-center__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.notification-center__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.notification-center__unread-count {
+    position: absolute;
+    top: -8px;
+    right: 50px;
+    background-color: var(--danger-color);
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.notification-center__close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-center__actions {
+    margin-bottom: 16px;
+}
+
+.notification-center__list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-center__item {
+    padding: 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.notification-center__item.unread {
+    background-color: #f0f5ff;
+    border-color: var(--primary-color);
+}
+
+.notification-center__item-content {
+    margin-bottom: 12px;
+}
+
+.notification-center__item-content h4 {
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.notification-center__item-content p {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.notification-center__item-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.notification-center__item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.notification-center__item-action {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.notification-center__item-action--read {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.notification-center__item-action--delete {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+/* 加载和错误状态 */
+.hospital-list__loading,
+.consultation-chat__loading,
+.consultation-history__loading,
+.appointment-records__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.hospital-list__error,
+.consultation-chat__error,
+.consultation-history__error,
+.appointment-records__error {
+    background-color: #fff1f0;
+    color: var(--danger-color);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    margin: 20px;
+    border-left: 4px solid var(--danger-color);
+}
+
+.hospital-list__empty,
+.consultation-chat__empty,
+.consultation-history__empty,
+.appointment-records__empty,
+.notification-center__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+/* 预约记录项样式 */
+.appointment-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.appointment-item:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.appointment-info {
+    margin-bottom: 16px;
+}
+
+.appointment-info h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+.appointment-doctor,
+.appointment-time {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.appointment-doctor::before,
+.appointment-time::before {
+    content: '•';
+    color: var(--text-light);
+    font-size: 12px;
+}
+
+.appointment-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-color);
+}
+
+.appointment-status[data-status='已确认'] {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-color);
+}
+
+.appointment-status[data-status='待确认'] {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.appointment-status[data-status='已取消'] {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.appointment-status[data-status='已完成'] {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.appointment-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.appointment-btn {
+    padding: 10px 24px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.appointment-btn--modify {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.appointment-btn--modify:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.appointment-btn--cancel {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+}
+
+.appointment-btn--cancel:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+.appointment-reminder {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    background-color: var(--card-hover);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.reminder-header span:first-child {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 15px;
+}
+
+.reminder-status {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--secondary-color);
+    background-color: rgba(16, 185, 129, 0.1);
+    padding: 4px 12px;
+    border-radius: 16px;
+    margin-bottom: 0;
+}
+
+.reminder-setting {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.reminder-time {
+    flex: 1;
+    min-width: 220px;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--card-bg);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.reminder-time:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    transform: translateY(-1px);
+}
+
+.reminder-save {
+    padding: 10px 24px;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.reminder-save:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    border-radius: var(--border-radius-lg);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: var(--shadow-hover);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10000;
+    max-width: 360px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification.show {
+    transform: translateX(0);
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification--success {
+    background-color: var(--secondary-color);
+}
+
+.notification--error {
+    background-color: var(--danger-color);
+}
+
+.notification--info {
+    background-color: var(--primary-color);
+}
+
+/* 聊天头部样式 */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    box-shadow: var(--shadow);
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.chat-header .feature-button {
+    padding: 8px 16px;
+    font-weight: 500;
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.chat-header .feature-button:hover {
+    background-color: var(--card-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px 0 rgba(59, 130, 246, 0.2);
+}
+
+/* 模态框样式 */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1199px) {
+    .hospital-list__content {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .consultation-chat {
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .hospital-list__controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hospital-list__filters {
+        flex-direction: column;
+    }
+
+    .hospital-list__content {
+        grid-template-columns: 1fr;
+    }
+
+    .consultation-history__controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .appointment-records__tabs {
+        overflow-x: auto;
+    }
+
+    .appointment-records__tab {
+        white-space: nowrap;
+    }
+
+    .notification-center {
+        width: 100%;
+    }
+
+    .consultation-chat {
+        height: 400px;
+    }
+
+    .consultation-chat__messages {
+        padding: 16px;
+    }
+
+    .consultation-chat__input {
+        padding: 12px 16px;
+    }
+
+    .appointment-form {
+        padding: 16px;
+    }
+
+    .consultation-history__detail-content {
+        padding: 16px;
+    }
+
+    .appointment-records__reschedule-content {
+        padding: 16px;
+    }
+
+    .notification-center__content {
+        padding: 16px;
+    }
+
+    .appointment-actions {
+        flex-direction: column;
+    }
+
+    .appointment-btn {
+        width: 100%;
+    }
+
+    .reminder-setting {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .reminder-time {
+        min-width: unset;
+    }
+
+    .reminder-save {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 20px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .hospital-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .consultation-chat__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .consultation-chat__message {
+        max-width: 85%;
+    }
+
+    .appointment-records__item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .appointment-records__item-actions {
+        flex-direction: column;
+    }
+
+    .appointment-records__item-actions button {
+        width: 100%;
+    }
+}

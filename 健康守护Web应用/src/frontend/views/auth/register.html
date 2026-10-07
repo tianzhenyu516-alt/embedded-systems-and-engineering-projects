@@ -1,0 +1,2888 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="注册健康守护系统账户，访问 www.example.invalid 获取健康管理与 AI 健康服务。" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://www.example.invalid/views/auth/register.html" />
+        <title>注册 - 健康守护系统</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <script src="/components/base/map-picker.js" defer></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+                position: relative;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow-x: hidden;
+                color: #2d3748;
+                padding: 20px 0;
+            }
+
+            /* 动态渐变背景 */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 25%, #667eea 50%, #764ba2 75%, #f093fb 100%);
+                background-size: 400% 400%;
+                animation: gradientShift 15s ease infinite;
+                z-index: -2;
+            }
+
+            /* 浮动粒子效果 */
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image:
+                    radial-gradient(circle at 25% 25%, rgba(67, 233, 123, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(56, 249, 215, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 30%, rgba(118, 75, 162, 0.35) 0%, transparent 50%);
+                animation: particleFloat 20s ease-in-out infinite;
+                z-index: -1;
+            }
+
+            @keyframes gradientShift {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            @keyframes particleFloat {
+                0%,
+                100% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 0.5;
+                }
+                25% {
+                    transform: translate(50px, -30px) scale(1.2);
+                    opacity: 0.7;
+                }
+                50% {
+                    transform: translate(-40px, 40px) scale(0.95);
+                    opacity: 0.6;
+                }
+                75% {
+                    transform: translate(30px, 20px) scale(1.1);
+                    opacity: 0.65;
+                }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* 注册容器 */
+            .register-container {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                border-radius: 24px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                width: 90%;
+                max-width: 500px;
+                padding: 50px 40px;
+                animation: slideIn 0.6s ease-out;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .register-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background: linear-gradient(90deg, #43e97b, #38f9d7, #667eea);
+            }
+
+            /* 标题区域 */
+            .register-header {
+                text-align: center;
+                margin-bottom: 35px;
+            }
+
+            .register-header .logo {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 20px;
+                background: linear-gradient(135deg, #1976d2 0%, #00897b 50%, #7cb342 100%);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 10px 30px rgba(25, 118, 210, 0.4);
+            }
+
+            .register-header .logo i {
+                font-size: 2.5rem;
+                color: white;
+            }
+
+            .register-header h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #2d3748;
+                margin-bottom: 8px;
+                letter-spacing: -0.5px;
+            }
+
+            .register-header p {
+                color: #718096;
+                font-size: 0.95rem;
+            }
+
+            /* 表单样式 */
+            .register-form {
+                margin-bottom: 25px;
+            }
+
+            .form-group {
+                margin-bottom: 22px;
+                position: relative;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: #4a5568;
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .input-wrapper {
+                position: relative;
+            }
+
+            .input-wrapper i {
+                position: absolute;
+                left: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #a0aec0;
+                font-size: 1.1rem;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 14px 60px 14px 50px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 1rem;
+                transition: all 0.3s;
+                background: white;
+                font-family: inherit;
+            }
+
+            .password-toggle-btn {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 44px;
+                height: 44px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #a0aec0;
+                font-size: 1.15rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 10;
+                border-radius: 50%;
+            }
+
+            .password-toggle-btn:hover {
+                color: #43e97b;
+                background: rgba(67, 233, 123, 0.1);
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .password-toggle-btn:active {
+                transform: translateY(-50%) scale(0.95);
+            }
+
+            .password-toggle-btn.visible {
+                color: #43e97b;
+            }
+
+            .password-toggle-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(67, 233, 123, 0.3);
+            }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #43e97b;
+                box-shadow: 0 0 0 4px rgba(67, 233, 123, 0.1);
+            }
+
+            .form-group input::placeholder {
+                color: #cbd5e0;
+            }
+
+            /* 角色选择 */
+            .role-selector {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 22px;
+            }
+
+            .role-option {
+                padding: 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                background: white;
+            }
+
+            .role-option:hover {
+                border-color: #43e97b;
+                background: rgba(67, 233, 123, 0.05);
+            }
+
+            .role-option.active {
+                border-color: #43e97b;
+                background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1));
+                box-shadow: 0 4px 12px rgba(67, 233, 123, 0.2);
+            }
+
+            .role-option i {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+                display: block;
+                color: #43e97b;
+            }
+
+            .role-option span {
+                font-size: 0.9rem;
+                color: #4a5568;
+                font-weight: 500;
+            }
+
+            .role-option p {
+                font-size: 0.75rem;
+                color: #a0aec0;
+                margin-top: 4px;
+            }
+
+            /* 密码强度指示器 */
+            .password-strength {
+                margin-top: 8px;
+                height: 4px;
+                background: #e2e8f0;
+                border-radius: 2px;
+                overflow: hidden;
+                display: none;
+            }
+
+            .password-strength-bar {
+                height: 100%;
+                width: 0%;
+                transition: all 0.3s;
+                border-radius: 2px;
+            }
+
+            .password-strength.weak .password-strength-bar {
+                width: 33%;
+                background: #fc8181;
+            }
+
+            .password-strength.medium .password-strength-bar {
+                width: 66%;
+                background: #f6ad55;
+            }
+
+            .password-strength.strong .password-strength-bar {
+                width: 100%;
+                background: #48bb78;
+            }
+
+            .password-hint {
+                font-size: 0.8rem;
+                color: #a0aec0;
+                margin-top: 4px;
+            }
+
+            /* 协议同意 */
+            .agreement {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 25px;
+                font-size: 0.9rem;
+                color: #4a5568;
+            }
+
+            .agreement input[type='checkbox'] {
+                width: 18px;
+                height: 18px;
+                margin-top: 2px;
+                cursor: pointer;
+                accent-color: #43e97b;
+            }
+
+            .agreement a {
+                color: #43e97b;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            .agreement a:hover {
+                text-decoration: underline;
+            }
+
+            /* 注册按钮 */
+            .btn-register {
+                width: 100%;
+                padding: 16px;
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 1.05rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+                font-family: inherit;
+            }
+
+            .btn-register:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(67, 233, 123, 0.5);
+            }
+
+            .btn-register:active {
+                transform: translateY(0);
+            }
+
+            .btn-register:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            /* 分隔线 */
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 25px 0;
+                color: #a0aec0;
+                font-size: 0.9rem;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: #e2e8f0;
+            }
+
+            .divider span {
+                padding: 0 15px;
+            }
+
+            /* 登录链接 */
+            .login-link {
+                text-align: center;
+                color: #718096;
+                font-size: 0.95rem;
+            }
+
+            .login-link a {
+                color: #43e97b;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.3s;
+            }
+
+            .login-link a:hover {
+                color: #38f9d7;
+            }
+
+            /* 消息提示 */
+            .message {
+                padding: 12px 16px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                display: none;
+                animation: fadeIn 0.3s;
+            }
+
+            .message.error {
+                background: #fed7d7;
+                color: #c53030;
+                border: 1px solid #fc8181;
+            }
+
+            .message.success {
+                background: #c6f6d5;
+                color: #2f855a;
+                border: 1px solid #9ae6b4;
+            }
+
+            .message i {
+                margin-right: 8px;
+            }
+
+            /* 注册弹出提示 */
+            .register-alert {
+                position: fixed;
+                top: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px);
+                min-width: min(420px, calc(100vw - 32px));
+                max-width: min(420px, calc(100vw - 32px));
+                padding: 16px 18px;
+                border-radius: 16px;
+                color: #fff;
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+                z-index: 3000;
+            }
+
+            .register-alert.show {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .register-alert.error {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            }
+
+            .register-alert.success {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            }
+
+            .register-alert-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.16);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .register-alert-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .register-alert-title {
+                font-size: 0.98rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .register-alert-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                opacity: 0.95;
+                word-break: break-word;
+            }
+
+            .register-alert-close {
+                border: none;
+                background: transparent;
+                color: inherit;
+                cursor: pointer;
+                padding: 4px;
+                font-size: 1rem;
+                opacity: 0.85;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+
+            .register-alert-close:hover {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+
+            .register-alert-close:focus {
+                outline: none;
+            }
+
+            /* 响应式设计 */
+            @media (max-width: 480px) {
+                .register-container {
+                    padding: 40px 30px;
+                    width: 95%;
+                }
+
+                .register-header h1 {
+                    font-size: 1.6rem;
+                }
+
+                .role-selector {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* 加载动画 */
+            .loading {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-top-color: white;
+                border-radius: 50%;
+                animation: spin 0.6s linear infinite;
+                margin-left: 8px;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* 授权码输入（仅医院角色显示） */
+            .auth-code-group {
+                display: none;
+            }
+
+            .auth-code-group.show {
+                display: block;
+            }
+
+            /* 授权码验证错误提示 */
+            .auth-code-error {
+                margin-top: 10px;
+                padding: 12px 16px;
+                background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+                border-left: 4px solid #e53e3e;
+                border-radius: 8px;
+                color: #c53030;
+                font-size: 0.9rem;
+                animation: shake 0.4s ease-in-out;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .auth-code-error i {
+                font-size: 1.1rem;
+                margin-top: 2px;
+                flex-shrink: 0;
+            }
+
+            .auth-code-error-content {
+                flex: 1;
+            }
+
+            .auth-code-error-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .auth-code-error-hint {
+                font-size: 0.85rem;
+                opacity: 0.9;
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20% { transform: translateX(-5px); }
+                40% { transform: translateX(5px); }
+                60% { transform: translateX(-5px); }
+                80% { transform: translateX(5px); }
+            }
+
+            /* 输入框错误状态 */
+            .input-wrapper.error input {
+                border-color: #e53e3e !important;
+                box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.1) !important;
+            }
+
+            .input-wrapper.error i {
+                color: #e53e3e !important;
+            }
+
+            /* 模态对话框 */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                z-index: 2000;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .modal-overlay.show {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 800px;
+                max-height: 85vh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                animation: slideUp 0.3s ease;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .modal-header {
+                padding: 25px 30px;
+                border-bottom: 2px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: linear-gradient(135deg, rgba(67, 233, 123, 0.05) 0%, rgba(56, 249, 215, 0.05) 100%);
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
+                color: #2d3748;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .modal-header h2 i {
+                color: #43e97b;
+            }
+
+            .modal-close {
+                width: 40px;
+                height: 40px;
+                border: none;
+                background: #e2e8f0;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.2rem;
+                color: #718096;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-close:hover {
+                background: #fc8181;
+                color: white;
+                transform: rotate(90deg);
+            }
+
+            .modal-body {
+                padding: 30px;
+                overflow-y: auto;
+                flex: 1;
+                line-height: 1.8;
+                color: #4a5568;
+            }
+
+            .modal-body::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .modal-body::-webkit-scrollbar-track {
+                background: #f7fafc;
+            }
+
+            .modal-body::-webkit-scrollbar-thumb {
+                background: #cbd5e0;
+                border-radius: 4px;
+            }
+
+            .modal-body::-webkit-scrollbar-thumb:hover {
+                background: #a0aec0;
+            }
+
+            .modal-section {
+                margin-bottom: 25px;
+            }
+
+            .modal-section h3 {
+                font-size: 1.1rem;
+                color: #2d3748;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .modal-section p {
+                margin-bottom: 10px;
+            }
+
+            .modal-section ul {
+                margin-left: 25px;
+                margin-bottom: 10px;
+            }
+
+            .modal-section li {
+                margin-bottom: 5px;
+            }
+
+            .modal-highlight {
+                background: rgba(67, 233, 123, 0.1);
+                border-left: 4px solid #43e97b;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 15px 0;
+            }
+
+            .modal-highlight p {
+                margin: 0;
+                color: #2d3748;
+            }
+
+            .modal-footer {
+                padding: 20px 30px;
+                border-top: 2px solid #e2e8f0;
+                text-align: right;
+            }
+
+            .modal-btn {
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .modal-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+            }
+
+            /* 管理员联系方式区域 */
+            .admin-contact-section {
+                display: none;
+                margin-top: 10px;
+                padding: 18px;
+                background: rgba(67, 233, 123, 0.08);
+                border-radius: 12px;
+                border: 1px solid rgba(67, 233, 123, 0.2);
+            }
+
+            .admin-contact-section.show {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .admin-contact-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 12px;
+                font-weight: 600;
+                color: #2d3748;
+            }
+
+            .admin-contact-header i {
+                color: #43e97b;
+                font-size: 1.2rem;
+            }
+
+            .admin-contact-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .admin-contact-item {
+                display: flex;
+                align-items: flex-start;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .admin-contact-item:last-child {
+                border-bottom: none;
+            }
+
+            .admin-contact-icon {
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border-radius: 8px;
+                margin-right: 12px;
+                flex-shrink: 0;
+            }
+
+            .admin-contact-icon i {
+                color: #667eea;
+                font-size: 0.9rem;
+            }
+
+            .admin-contact-details {
+                flex: 1;
+            }
+
+            .admin-contact-label {
+                font-size: 0.8rem;
+                color: #718096;
+                margin-bottom: 2px;
+            }
+
+            .admin-contact-value {
+                font-size: 0.95rem;
+                color: #2d3748;
+                font-weight: 500;
+            }
+
+            .admin-contact-value a {
+                color: #667eea;
+                text-decoration: none;
+            }
+
+            .admin-contact-value a:hover {
+                text-decoration: underline;
+            }
+
+            .admin-role-tag {
+                display: inline-block;
+                padding: 3px 8px;
+                background: rgba(102, 126, 234, 0.1);
+                color: #667eea;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                margin-left: 8px;
+            }
+
+            .admin-province-tag {
+                display: inline-block;
+                padding: 3px 8px;
+                background: rgba(67, 233, 123, 0.15);
+                color: #2f855a;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                margin-left: 8px;
+            }
+
+            @media (max-width: 768px) {
+                .modal-content {
+                    width: 95%;
+                    max-height: 90vh;
+                    border-radius: 16px;
+                }
+
+                .modal-header {
+                    padding: 20px;
+                }
+
+                .modal-header h2 {
+                    font-size: 1.2rem;
+                }
+
+                .modal-body {
+                    padding: 20px;
+                    font-size: 0.9rem;
+                }
+
+                .modal-footer {
+                    padding: 15px 20px;
+                }
+            }
+
+            /* ==================== 自定义地区选择框样式 ==================== */
+            .custom-select-wrapper {
+                position: relative;
+                width: 100%;
+            }
+
+            .custom-select-wrapper i {
+                position: absolute;
+                left: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #a0aec0;
+                font-size: 1.1rem;
+                z-index: 10;
+                pointer-events: none;
+            }
+
+            .custom-select {
+                width: 100%;
+                padding: 14px 60px 14px 50px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 1rem;
+                background: white;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                user-select: none;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .custom-select:hover {
+                border-color: #cbd5e0;
+                background: #f7fafc;
+            }
+
+            .custom-select:focus,
+            .custom-select.active {
+                outline: none;
+                border-color: #43e97b;
+                box-shadow: 0 0 0 4px rgba(67, 233, 123, 0.1);
+            }
+
+            .custom-select .select-value {
+                color: #2d3748;
+                flex: 1;
+                text-align: left;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .custom-select .select-value.placeholder {
+                color: #cbd5e0;
+            }
+
+            .custom-select .select-arrow {
+                color: #a0aec0;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                flex-shrink: 0;
+                margin-left: 12px;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+            }
+
+            .custom-select.active .select-arrow {
+                transform: rotate(180deg);
+                color: #43e97b;
+            }
+
+            .custom-select-dropdown {
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 0;
+                right: 0;
+                background: white;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                max-height: 320px;
+                overflow-y: auto;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .custom-select-dropdown.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .custom-select-dropdown::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .custom-select-dropdown::-webkit-scrollbar-track {
+                background: #f7fafc;
+                border-radius: 0 10px 10px 0;
+            }
+
+            .custom-select-dropdown::-webkit-scrollbar-thumb {
+                background: #cbd5e0;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+
+            .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+                background: #a0aec0;
+            }
+
+            .custom-select-option {
+                padding: 12px 18px;
+                cursor: pointer;
+                transition: all 0.2s;
+                color: #4a5568;
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-bottom: 1px solid #f7fafc;
+            }
+
+            .custom-select-option:last-child {
+                border-bottom: none;
+            }
+
+            .custom-select-option:hover {
+                background: linear-gradient(135deg, rgba(67, 233, 123, 0.08), rgba(56, 249, 215, 0.08));
+                color: #2d3748;
+            }
+
+            .custom-select-option.selected {
+                background: linear-gradient(135deg, rgba(67, 233, 123, 0.15), rgba(56, 249, 215, 0.15));
+                color: #2f855a;
+                font-weight: 600;
+            }
+
+            .custom-select-option.selected::before {
+                content: '✓';
+                color: #43e97b;
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+
+            .custom-select-option.highlighted {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+                color: #667eea;
+            }
+
+            .custom-select-loading {
+                padding: 20px;
+                text-align: center;
+                color: #718096;
+            }
+
+            .custom-select-loading i {
+                animation: spin 0.6s linear infinite;
+                color: #43e97b;
+                margin-right: 8px;
+            }
+
+            /* 隐藏原生 select，保持表单功能 */
+            .custom-select-wrapper select {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+                z-index: -1;
+            }
+
+            /* 响应式调整 - 移动端 */
+            @media (max-width: 480px) {
+                .custom-select {
+                    padding: 12px 50px 12px 45px;
+                    font-size: 0.95rem;
+                }
+
+                .custom-select-wrapper i {
+                    left: 15px;
+                    font-size: 1rem;
+                }
+
+                .custom-select .select-arrow {
+                    width: 18px;
+                    height: 18px;
+                    font-size: 0.8rem;
+                    margin-left: 8px;
+                }
+
+                .custom-select-dropdown {
+                    max-height: 250px;
+                }
+
+                .custom-select-option {
+                    padding: 10px 15px;
+                    font-size: 0.9rem;
+                }
+            }
+
+            /* 高对比度模式支持 */
+            @media (prefers-contrast: high) {
+                .custom-select,
+                .custom-select-dropdown {
+                    border-width: 3px;
+                }
+
+                .custom-select-option:hover,
+                .custom-select-option.highlighted {
+                    outline: 2px solid currentColor;
+                }
+            }
+
+            /* 减少动画模式支持 */
+            @media (prefers-reduced-motion: reduce) {
+                .custom-select,
+                .custom-select-dropdown,
+                .custom-select .select-arrow,
+                .custom-select-option {
+                    transition: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="registerAlert" class="register-alert" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="register-alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="register-alert-content">
+                <div class="register-alert-title">提示</div>
+                <div class="register-alert-text"></div>
+            </div>
+            <button type="button" class="register-alert-close" id="registerAlertClose" aria-label="关闭提示">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="register-container">
+            <div class="register-header">
+                <div class="logo">
+                    <img src="/assets/icons/favicon.svg" alt="Logo" style="width: 60px; height: 60px;">
+                </div>
+                <h1>创建账户</h1>
+                <p>加入健康守护，开启健康管理之旅</p>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <form class="register-form" id="registerForm">
+                <div class="form-group">
+                    <label>选择角色</label>
+                    <div class="role-selector">
+                        <div class="role-option active" data-role="user">
+                            <i class="fas fa-user"></i>
+                            <span>普通用户</span>
+                            <p>个人健康管理</p>
+                        </div>
+                        <div class="role-option" data-role="hospital">
+                            <i class="fas fa-hospital"></i>
+                            <span>医院机构</span>
+                            <p>需要授权码</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="role" name="role" value="user" />
+                </div>
+
+                <div class="form-group auth-code-group" id="authCodeGroup">
+                    <label for="authCode">授权码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="authCode" name="authCode" placeholder="请输入医院授权码" />
+                    </div>
+                    <p class="password-hint">请选择省份获取管理员联系方式以取得授权</p>
+                    <!-- 省份授权码验证错误提示 -->
+                    <div id="authCodeError" class="auth-code-error" style="display:none;"></div>
+
+                    <!-- 管理员联系方式区域 -->
+                    <div class="admin-contact-section" id="adminContactSection">
+                        <div class="admin-contact-header">
+                            <i class="fas fa-id-card"></i>
+                            <span>请联系以下管理员获取授权</span>
+                        </div>
+                        <ul class="admin-contact-list" id="adminContactList"></ul>
+                    </div>
+                </div>
+
+                <!-- 医院名称输入框 -->
+                <div class="form-group auth-code-group" id="hospitalNameGroup">
+                    <label for="hospitalName">医院名称 <span style="color: red">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-hospital"></i>
+                        <input type="text" id="hospitalName" name="hospitalName" placeholder="请输入医院名称（2-100个字符）" minlength="2" maxlength="100" />
+                    </div>
+                    <p class="password-hint">请输入完整的医院名称，长度为2-100个字符</p>
+                </div>
+
+                <div class="form-group auth-code-group" id="hospitalLocationGroup">
+                    <label for="hospitalAddress">医院位置 <span style="color: red">*</span></label>
+                    <div class="input-wrapper" style="display: flex; gap: 12px; align-items: center;">
+                        <i class="fas fa-map-location-dot"></i>
+                        <input
+                            type="text"
+                            id="hospitalAddress"
+                            name="hospitalAddress"
+                            placeholder="请选择医院详细地址"
+                            readonly
+                            style="padding-right: 18px; cursor: pointer;"
+                        />
+                        <button
+                            type="button"
+                            id="openHospitalMapPicker"
+                            class="btn-register"
+                            style="width: auto; min-width: 120px; padding: 14px 18px; margin-top: 0; white-space: nowrap;"
+                        >
+                            选点定位
+                        </button>
+                    </div>
+                    <input type="hidden" id="hospitalLat" name="hospitalLat" />
+                    <input type="hidden" id="hospitalLng" name="hospitalLng" />
+                    <p class="password-hint" id="hospitalLocationHint">请在地图中选择医院位置，以便用户端正确显示附近医院</p>
+                </div>
+
+                <div class="form-group auth-code-group" id="hospitalCityGroup">
+                    <label for="hospitalCity">医院所在市 <span style="color: red">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-city"></i>
+                        <input
+                            type="text"
+                            id="hospitalCity"
+                            name="hospitalCity"
+                            placeholder="地图选点后自动填充，也可手动修改"
+                            maxlength="50"
+                        />
+                    </div>
+                    <p class="password-hint">用于更准确地展示和筛选医院，可根据实际情况修改</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="province">所在地<span style="color: red">*</span></label>
+                    <div class="custom-select-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div
+                            class="custom-select"
+                            id="provinceCustomSelect"
+                            tabindex="0"
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-haspopup="listbox"
+                            aria-label="选择所在地"
+                            aria-controls="provinceOptionsList"
+                        >
+                            <span class="select-value placeholder">请选择所在省/直辖市/自治区</span>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                        <div
+                            class="custom-select-dropdown"
+                            id="provinceOptionsList"
+                            role="listbox"
+                            aria-label="省份选项列表"
+                        ></div>
+                        <select id="province" name="province" required>
+                            <option value="">请选择所在省/直辖市/自治区</option>
+                            <option value="北京市">北京市</option>
+                            <option value="天津市">天津市</option>
+                            <option value="河北省">河北省</option>
+                            <option value="山西省">山西省</option>
+                            <option value="内蒙古自治区">内蒙古自治区</option>
+                            <option value="辽宁省">辽宁省</option>
+                            <option value="吉林省">吉林省</option>
+                            <option value="黑龙江省">黑龙江省</option>
+                            <option value="上海市">上海市</option>
+                            <option value="江苏省">江苏省</option>
+                            <option value="浙江省">浙江省</option>
+                            <option value="安徽省">安徽省</option>
+                            <option value="福建省">福建省</option>
+                            <option value="江西省">江西省</option>
+                            <option value="山东省">山东省</option>
+                            <option value="河南省">河南省</option>
+                            <option value="湖北省">湖北省</option>
+                            <option value="湖南省">湖南省</option>
+                            <option value="广东省">广东省</option>
+                            <option value="广西壮族自治区">广西壮族自治区</option>
+                            <option value="海南省">海南省</option>
+                            <option value="重庆市">重庆市</option>
+                            <option value="四川省">四川省</option>
+                            <option value="贵州省">贵州省</option>
+                            <option value="云南省">云南省</option>
+                            <option value="西藏自治区">西藏自治区</option>
+                            <option value="陕西省">陕西省</option>
+                            <option value="甘肃省">甘肃省</option>
+                            <option value="青海省">青海省</option>
+                            <option value="宁夏回族自治区">宁夏回族自治区</option>
+                            <option value="新疆维吾尔自治区">新疆维吾尔自治区</option>
+                            <option value="台湾省">台湾省</option>
+                            <option value="香港特别行政区">香港特别行政区</option>
+                            <option value="澳门特别行政区">澳门特别行政区</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="请输入用户名（2-20个字符）"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="请输入邮箱地址" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="请输入密码（至少6个字符）"
+                            required
+                        />
+                        <button
+                            type="button"
+                            class="password-toggle-btn"
+                            id="passwordToggleBtn"
+                            aria-label="显示密码"
+                            aria-pressed="false"
+                            tabindex="0"
+                        >
+                            <i class="fas fa-eye-slash"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="password-strength-bar"></div>
+                    </div>
+                    <p class="password-hint">密码长度至少6个字符，建议包含字母和数字</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="请再次输入密码"
+                            required
+                        />
+                        <button
+                            type="button"
+                            class="password-toggle-btn"
+                            id="confirmPasswordToggleBtn"
+                            aria-label="显示密码"
+                            aria-pressed="false"
+                            tabindex="0"
+                        >
+                            <i class="fas fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="agreement">
+                    <input type="checkbox" id="agree" name="agree" required />
+                    <label for="agree">
+                        我已阅读并同意<a href="user-agreement.html" target="_blank">用户协议</a> 和
+                        <a href="privacy-policy.html" target="_blank">隐私政策</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <span>立即注册</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>已有账户</span>
+            </div>
+
+            <div class="login-link">
+                <a href="login.html">立即登录</a>
+            </div>
+        </div>
+
+        <!-- 用户协议模态框 -->
+        <div class="modal-overlay" id="userAgreementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-file-contract"></i> 用户协议</h2>
+                    <button class="modal-close" onclick="closeModal('userAgreementModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-section">
+                        <h3>一、协议说明</h3>
+                        <p>欢迎使用健康守护系统。本用户协议是您与健康守护系统之间关于使用本系统服务的法律协议。</p>
+                        <div class="modal-highlight">
+                            <p>
+                                <strong>重要提示：</strong>
+                                在使用本系统之前，请您仔细阅读并理解本协议的全部内容。如果您不同意本协议的任何条款，请不要使用本系统。您的注册、登录或使用行为将被视为对本协议的完全接受。
+                            </p>
+                        </div>
+                        <p>我们保留在法律法规允许范围内更新本协议内容的权利，更新后的协议公布后即生效。</p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>二、账户注册与使用</h3>
+                        <ul>
+                            <li>您需要注册账户后才能使用本系统的完整功能</li>
+                            <li>您应提供真实、准确、完整的注册信息</li>
+                            <li>您应妥善保管账户密码，并对账户下的行为负责</li>
+                            <li>不得转让、出借账户或与他人共享账号</li>
+                            <li>不得利用账户从事违法违规活动</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>三、服务内容</h3>
+                        <ul>
+                            <li>健康数据记录与追踪</li>
+                            <li>AI 健康建议与指导</li>
+                            <li>饮食规划与运动建议</li>
+                            <li>心理陪伴与咨询辅助</li>
+                            <li>远程问诊助手</li>
+                        </ul>
+                        <div class="modal-highlight">
+                            <p>
+                                <strong>服务说明：</strong>
+                                本系统提供的健康建议仅供参考，不能替代专业医生的诊断和治疗。如有健康问题，请及时就医。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>四、用户权利与义务</h3>
+                        <ul>
+                            <li>按照本协议约定使用本系统服务</li>
+                            <li>对自己的个人信息进行查阅、更正和删除</li>
+                            <li>遵守相关法律法规</li>
+                            <li>维护网络安全，不从事危害系统安全的行为</li>
+                            <li>不得利用系统侵犯他人合法权益</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>五、知识产权</h3>
+                        <p>
+                            本系统的文字、图片、软件、程序、界面设计等内容均受著作权法、商标法及其他相关法律保护。未经书面许可，您不得复制、传播、展示、上传或下载本系统内容。
+                        </p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>六、免责声明</h3>
+                        <ul>
+                            <li>本系统按“现状”提供服务，不保证一定满足您的全部需求</li>
+                            <li>因不可抗力、网络故障、系统维护等原因导致服务中断时，我们将在合理范围内处理</li>
+                            <li>健康建议仅供参考，不能替代专业医疗意见</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>七、违约责任</h3>
+                        <p>
+                            如您违反本协议，我们有权采取警告、限制服务、冻结或注销账户等措施；如因此给我们或第三方造成损失，您应依法承担相应责任。
+                        </p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>八、联系我们</h3>
+                        <p>如果您对本协议有任何疑问，请通过以下方式联系我们：</p>
+                        <ul>
+                            <li><strong>邮箱：</strong>contact@example.invalid</li>
+                            <li><strong>网站：</strong>www.example.invalid</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn" onclick="closeModal('userAgreementModal')">
+                        <i class="fas fa-check"></i> 我已阅读
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 隐私政策模态框 -->
+        <div class="modal-overlay" id="privacyPolicyModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-shield-alt"></i> 隐私政策</h2>
+                    <button class="modal-close" onclick="closeModal('privacyPolicyModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-section">
+                        <h3>一、引言</h3>
+                        <p>
+                            健康守护系统非常重视用户的隐私保护。本隐私政策用于说明我们如何收集、使用、存储和保护您的个人信息。
+                        </p>
+                        <div class="modal-highlight">
+                            <p>
+                                <strong>核心承诺：</strong>
+                                我们将严格按照法律法规要求，采取合理的安全措施保护您的个人信息。除非获得您的明确同意或法律法规要求，我们不会向第三方共享您的个人信息。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>二、信息收集范围</h3>
+                        <h4>2.1 账户注册信息</h4>
+                        <ul>
+                            <li><strong>用户名：</strong>用于账户识别和登录</li>
+                            <li><strong>邮箱地址：</strong>用于账户验证、密码找回和重要通知</li>
+                            <li><strong>密码：</strong>用于账户安全保护，并以加密方式存储</li>
+                            <li><strong>角色信息：</strong>用于区分用户、医院、管理员等角色</li>
+                        </ul>
+
+                        <h4>2.2 健康数据信息</h4>
+                        <ul>
+                            <li>基本健康指标：心率、血压、血糖、体温、体重、身高等</li>
+                            <li>运动数据：步数、运动时长、消耗卡路里、运动类型等</li>
+                            <li>睡眠数据：睡眠时长、睡眠质量、深睡/浅睡时间等</li>
+                            <li>饮食记录：饮食内容、营养摄入、饮食习惯等</li>
+                            <li>心理状态：情绪记录、压力水平、心理评估等</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>三、信息使用方式</h3>
+                        <ul>
+                            <li>提供健康数据记录、追踪和分析服务</li>
+                            <li>生成个性化健康建议和指导</li>
+                            <li>实现 AI 健康咨询和问诊辅助功能</li>
+                            <li>支持饮食规划和运动建议服务</li>
+                            <li>验证用户身份，保障账户安全</li>
+                            <li>分析使用习惯并持续改善用户体验</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>四、信息共享与披露</h3>
+                        <div class="modal-highlight">
+                            <p>
+                                <strong>重要原则：</strong>
+                                除以下情形外，我们不会向任何第三方出售、出租或以其他方式共享您的个人信息。
+                            </p>
+                        </div>
+                        <ul>
+                            <li>在获得您的明确同意后进行共享</li>
+                            <li>与服务提供商合作时，仅在必要范围内共享</li>
+                            <li>遵守法律法规、法院命令或政府监管要求</li>
+                            <li>保护我们的合法权利、财产或安全</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>五、信息存储与保护</h3>
+                        <h4>5.1 存储期限</h4>
+                        <ul>
+                            <li>账户信息：保留至账户注销后合理期限内</li>
+                            <li>健康数据：保留至账户注销后依据法律法规要求的期限内</li>
+                            <li>日志数据：按安全审计和系统维护需要保留</li>
+                        </ul>
+
+                        <h4>5.2 安全措施</h4>
+                        <ul>
+                            <li><strong>数据加密：</strong>传输过程使用 SSL/TLS 加密，存储使用加密保护</li>
+                            <li><strong>访问控制：</strong>严格的权限管理，最小化数据访问范围</li>
+                            <li><strong>安全审计：</strong>定期进行安全漏洞扫描</li>
+                            <li><strong>人员培训：</strong>对员工进行隐私保护和安全培训</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>六、您的权利</h3>
+                        <ul>
+                            <li><strong>知情权：</strong>了解我们收集哪些信息</li>
+                            <li><strong>访问权：</strong>访问您的个人信息副本</li>
+                            <li><strong>更正权：</strong>更正不准确的个人信息</li>
+                            <li><strong>删除权：</strong>删除您的个人信息或注销账户</li>
+                            <li><strong>撤回同意权：</strong>撤回对信息处理的授权</li>
+                        </ul>
+                        <p>您可以通过账户设置页面或发送邮件至 contact@example.invalid 行使上述权利。</p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>七、Cookie 和类似技术</h3>
+                        <p>我们可能使用 Cookie 来记住您的偏好和必要设置，以提升服务体验。</p>
+                        <ul>
+                            <li><strong>必要 Cookie：</strong>用于登录状态与基础功能</li>
+                            <li><strong>功能 Cookie：</strong>用于记住偏好设置</li>
+                            <li><strong>分析 Cookie：</strong>用于统计分析和服务优化</li>
+                        </ul>
+                        <p>您可以通过浏览器设置管理或删除 Cookie。</p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>八、未成年人保护</h3>
+                        <ul>
+                            <li>我们的服务主要面向 18 周岁以上用户</li>
+                            <li>未满 18 周岁的未成年人应在监护人指导下使用</li>
+                            <li>如发现误收集未成年人信息，请及时联系我们处理</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>九、联系我们</h3>
+                        <p>如果您对本隐私政策有任何疑问，请通过以下方式联系我们：</p>
+                        <ul>
+                            <li><strong>邮箱：</strong>contact@example.invalid</li>
+                            <li><strong>网站：</strong>www.example.invalid</li>
+                        </ul>
+                        <p>我们将在收到您的请求后尽快予以回复。</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn" onclick="closeModal('privacyPolicyModal')">
+                        <i class="fas fa-check"></i> 我已阅读
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // ==================== 省份授权码验证功能 ====================
+            const PROVINCES = [
+                '北京市',
+                '天津市',
+                '河北省',
+                '山西省',
+                '内蒙古自治区',
+                '辽宁省',
+                '吉林省',
+                '黑龙江省',
+                '上海市',
+                '江苏省',
+                '浙江省',
+                '安徽省',
+                '福建省',
+                '江西省',
+                '山东省',
+                '河南省',
+                '湖北省',
+                '湖南省',
+                '广东省',
+                '广西壮族自治区',
+                '海南省',
+                '重庆市',
+                '四川省',
+                '贵州省',
+                '云南省',
+                '西藏自治区',
+                '陕西省',
+                '甘肃省',
+                '青海省',
+                '宁夏回族自治区',
+                '新疆维吾尔自治区',
+                '台湾省',
+                '香港特别行政区',
+                '澳门特别行政区',
+            ];
+
+            const PROVINCE_SHORT_NAMES = {
+                '北京': '北京市',
+                '天津': '天津市',
+                '河北': '河北省',
+                '山西': '山西省',
+                '内蒙古': '内蒙古自治区',
+                '辽宁': '辽宁省',
+                '吉林': '吉林省',
+                '黑龙江': '黑龙江省',
+                '上海': '上海市',
+                '江苏': '江苏省',
+                '浙江': '浙江省',
+                '安徽': '安徽省',
+                '福建': '福建省',
+                '江西': '江西省',
+                '山东': '山东省',
+                '河南': '河南省',
+                '湖北': '湖北省',
+                '湖南': '湖南省',
+                '广东': '广东省',
+                '广西': '广西壮族自治区',
+                '海南': '海南省',
+                '重庆': '重庆市',
+                '四川': '四川省',
+                '贵州': '贵州省',
+                '云南': '云南省',
+                '西藏': '西藏自治区',
+                '陕西': '陕西省',
+                '甘肃': '甘肃省',
+                '青海': '青海省',
+                '宁夏': '宁夏回族自治区',
+                '新疆': '新疆维吾尔自治区',
+                '台湾': '台湾省',
+                '香港': '香港特别行政区',
+                '澳门': '澳门特别行政区',
+            };
+
+            const pinyinMap = {
+                'BEIJING': '北京市',
+                'TIANJIN': '天津市',
+                'HEBEI': '河北省',
+                'SHANXI': '山西省',
+                'NEIMENGGU': '内蒙古自治区',
+                'LIAONING': '辽宁省',
+                'JILIN': '吉林省',
+                'HEILONGJIANG': '黑龙江省',
+                'SHANGHAI': '上海市',
+                'JIANGSU': '江苏省',
+                'ZHEJIANG': '浙江省',
+                'ANHUI': '安徽省',
+                'FUJIAN': '福建省',
+                'JIANGXI': '江西省',
+                'SHANDONG': '山东省',
+                'HENAN': '河南省',
+                'HUBEI': '湖北省',
+                'HUNAN': '湖南省',
+                'GUANGDONG': '广东省',
+                'GUANGXI': '广西壮族自治区',
+                'HAINAN': '海南省',
+                'CHONGQING': '重庆市',
+                'SICHUAN': '四川省',
+                'GUIZHOU': '贵州省',
+                'YUNNAN': '云南省',
+                'XIZANG': '西藏自治区',
+                'SHAANXI': '陕西省',
+                'GANSU': '甘肃省',
+                'QINGHAI': '青海省',
+                'NINGXIA': '宁夏回族自治区',
+                'XINJIANG': '新疆维吾尔自治区',
+                'TAIWAN': '台湾省',
+                'HONGKONG': '香港特别行政区',
+                'MACAO': '澳门特别行政区',
+            };
+
+            function extractProvinceFromAuthCode(authCode) {
+                if (!authCode || typeof authCode !== 'string') {
+                    return null;
+                }
+
+                for (const province of PROVINCES) {
+                    if (authCode.includes(province)) {
+                        return province;
+                    }
+                }
+
+                for (const [short, full] of Object.entries(PROVINCE_SHORT_NAMES)) {
+                    if (authCode.includes(short)) {
+                        return full;
+                    }
+                }
+
+                const upperAuthCode = authCode.toUpperCase();
+                for (const [pinyin, province] of Object.entries(pinyinMap)) {
+                    if (upperAuthCode.includes(pinyin)) {
+                        return province;
+                    }
+                }
+
+                return null;
+            }
+
+            function normalizeProvinceName(province) {
+                if (!province || typeof province !== 'string') {
+                    return null;
+                }
+
+                return province
+                    .trim()
+                    .replace(/特别行政区$/u, '')
+                    .replace(/维吾尔自治区$/u, '')
+                    .replace(/壮族自治区$/u, '')
+                    .replace(/回族自治区$/u, '')
+                    .replace(/自治区$/u, '')
+                    .replace(/省$/u, '')
+                    .replace(/市$/u, '');
+            }
+
+            function extractProvinceFromAddress(address) {
+                if (!address || typeof address !== 'string') {
+                    return null;
+                }
+
+                for (const province of PROVINCES) {
+                    if (address.includes(province)) {
+                        return province;
+                    }
+                }
+
+                for (const [short, full] of Object.entries(PROVINCE_SHORT_NAMES)) {
+                    if (address.includes(short)) {
+                        return full;
+                    }
+                }
+
+                return null;
+            }
+
+            function updateProvinceSelection(province) {
+                const normalizedProvince = normalizeProvinceName(province);
+                if (!normalizedProvince) {
+                    return false;
+                }
+
+                const nativeSelect = document.getElementById('province');
+                const customSelect = document.getElementById('provinceCustomSelect');
+                const selectValue = customSelect?.querySelector('.select-value');
+                const option = Array.from(nativeSelect?.options || []).find(item => {
+                    return normalizeProvinceName(item.value) === normalizedProvince;
+                });
+
+                if (!nativeSelect || !option) {
+                    return false;
+                }
+
+                nativeSelect.value = option.value;
+
+                if (selectValue) {
+                    selectValue.textContent = option.textContent;
+                    selectValue.classList.remove('placeholder');
+                }
+
+                const dropdownOptions = document.querySelectorAll('#provinceOptionsList .custom-select-option');
+                dropdownOptions.forEach(opt => {
+                    const isSelected = opt.dataset.value === option.value;
+                    opt.classList.toggle('selected', isSelected);
+                    opt.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                });
+
+                nativeSelect.dispatchEvent(new Event('change'));
+                return true;
+            }
+
+            function validateProvinceMatch(authCode, selectedProvince) {
+                if (!authCode || !selectedProvince) {
+                    return false;
+                }
+
+                const authCodeProvince = extractProvinceFromAuthCode(authCode);
+
+                // 新版授权码是随机码，编码本身不包含省份信息。
+                // 只有当授权码里能明确解析出省份时，才做前端不匹配拦截；
+                // 否则交由后端按授权码真实归属省份校验。
+                if (!authCodeProvince) {
+                    return true;
+                }
+
+                return normalizeProvinceName(authCodeProvince) === normalizeProvinceName(selectedProvince);
+            }
+
+            function validateAuthCodeProvince() {
+                const role = document.getElementById('role').value;
+                if (role !== 'hospital') {
+                    hideAuthCodeError();
+                    return true;
+                }
+
+                const authCode = document.getElementById('authCode').value.trim();
+                const selectedProvince = document.getElementById('province').value;
+
+                if (!authCode || !selectedProvince) {
+                    hideAuthCodeError();
+                    return true;
+                }
+
+                const isValid = validateProvinceMatch(authCode, selectedProvince);
+
+                if (!isValid) {
+                    showAuthCodeError();
+                    return false;
+                }
+
+                hideAuthCodeError();
+                return true;
+            }
+
+            function showAuthCodeError() {
+                const errorEl = document.getElementById('authCodeError');
+                const inputWrapper = document.querySelector('#authCode').closest('.input-wrapper');
+                
+                errorEl.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="auth-code-error-content">
+                        <div class="auth-code-error-title">省份不匹配</div>
+                        <div class="auth-code-error-hint">您输入的省份授权码与所选医院地区不匹配，请核对后重新输入。</div>
+                    </div>
+                `;
+                errorEl.style.display = 'flex';
+                
+                if (inputWrapper) {
+                    inputWrapper.classList.add('error');
+                }
+            }
+
+            function hideAuthCodeError() {
+                const errorEl = document.getElementById('authCodeError');
+                const inputWrapper = document.querySelector('#authCode').closest('.input-wrapper');
+                
+                errorEl.style.display = 'none';
+                
+                if (inputWrapper) {
+                    inputWrapper.classList.remove('error');
+                }
+            }
+
+            // 绑定验证事件
+            document.getElementById('authCode').addEventListener('input', validateAuthCodeProvince);
+            document.getElementById('province').addEventListener('change', validateAuthCodeProvince);
+
+            // ==================== 自定义地区选择框功能 ====================
+            (function () {
+                const customSelect = document.getElementById('provinceCustomSelect');
+                const dropdown = document.getElementById('provinceOptionsList');
+                const nativeSelect = document.getElementById('province');
+                const selectValue = customSelect.querySelector('.select-value');
+                const options = Array.from(nativeSelect.options);
+                let highlightedIndex = -1;
+                let selectedValue = '';
+
+                // 初始化下拉选项
+                function initDropdownOptions() {
+                    dropdown.innerHTML = '';
+                    options.forEach((option, index) => {
+                        if (option.value === '') return;
+                        const optionEl = document.createElement('div');
+                        optionEl.className = 'custom-select-option';
+                        optionEl.textContent = option.textContent;
+                        optionEl.dataset.value = option.value;
+                        optionEl.dataset.index = index;
+                        optionEl.setAttribute('role', 'option');
+                        optionEl.setAttribute('aria-selected', 'false');
+                        optionEl.setAttribute('tabindex', '-1');
+                        dropdown.appendChild(optionEl);
+                    });
+                }
+
+                // 切换下拉框显示/隐藏
+                function toggleDropdown(show) {
+                    if (show) {
+                        customSelect.classList.add('active');
+                        dropdown.classList.add('show');
+                        customSelect.setAttribute('aria-expanded', 'true');
+                        if (selectedValue) {
+                            const selectedOption = dropdown.querySelector(`[data-value="${selectedValue}"]`);
+                            if (selectedOption) {
+                                highlightedIndex = parseInt(selectedOption.dataset.index);
+                                scrollToOption(selectedOption);
+                            }
+                        }
+                    } else {
+                        customSelect.classList.remove('active');
+                        dropdown.classList.remove('show');
+                        customSelect.setAttribute('aria-expanded', 'false');
+                        highlightedIndex = -1;
+                        clearHighlight();
+                    }
+                }
+
+                // 选择选项
+                function selectOption(value, text) {
+                    selectedValue = value;
+                    selectValue.textContent = text;
+                    selectValue.classList.remove('placeholder');
+
+                    // 更新原生select
+                    nativeSelect.value = value;
+
+                    // 更新选项样式
+                    dropdown.querySelectorAll('.custom-select-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.setAttribute('aria-selected', 'false');
+                        if (opt.dataset.value === value) {
+                            opt.classList.add('selected');
+                            opt.setAttribute('aria-selected', 'true');
+                        }
+                    });
+
+                    // 触发原生select的change事件
+                    nativeSelect.dispatchEvent(new Event('change'));
+
+                    toggleDropdown(false);
+                    customSelect.focus();
+                }
+
+                // 清除高亮
+                function clearHighlight() {
+                    dropdown.querySelectorAll('.custom-select-option').forEach(opt => {
+                        opt.classList.remove('highlighted');
+                    });
+                }
+
+                // 高亮指定选项
+                function highlightOption(index) {
+                    clearHighlight();
+                    const optionEls = dropdown.querySelectorAll('.custom-select-option');
+                    if (index >= 0 && index < optionEls.length) {
+                        optionEls[index].classList.add('highlighted');
+                        scrollToOption(optionEls[index]);
+                        customSelect.setAttribute('aria-activedescendant', optionEls[index].id || '');
+                    }
+                }
+
+                // 滚动到指定选项
+                function scrollToOption(optionEl) {
+                    optionEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+
+                // 键盘导航
+                function handleKeyDown(e) {
+                    const optionEls = dropdown.querySelectorAll('.custom-select-option');
+                    const isOpen = dropdown.classList.contains('show');
+
+                    switch (e.key) {
+                        case 'Enter':
+                        case ' ':
+                            e.preventDefault();
+                            if (isOpen && highlightedIndex >= 0) {
+                                const selectedOption = optionEls[highlightedIndex];
+                                selectOption(selectedOption.dataset.value, selectedOption.textContent);
+                            } else {
+                                toggleDropdown(!isOpen);
+                            }
+                            break;
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            if (!isOpen) {
+                                toggleDropdown(true);
+                            } else {
+                                highlightedIndex = highlightedIndex < optionEls.length - 1 ? highlightedIndex + 1 : 0;
+                                highlightOption(highlightedIndex);
+                            }
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            if (!isOpen) {
+                                toggleDropdown(true);
+                            } else {
+                                highlightedIndex = highlightedIndex > 0 ? highlightedIndex - 1 : optionEls.length - 1;
+                                highlightOption(highlightedIndex);
+                            }
+                            break;
+                        case 'Escape':
+                            if (isOpen) {
+                                toggleDropdown(false);
+                            }
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            if (isOpen) {
+                                highlightedIndex = 0;
+                                highlightOption(highlightedIndex);
+                            }
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            if (isOpen) {
+                                highlightedIndex = optionEls.length - 1;
+                                highlightOption(highlightedIndex);
+                            }
+                            break;
+                        default:
+                            // 支持字母快速搜索
+                            if (/^[a-zA-Z\u4e00-\u9fa5]$/.test(e.key)) {
+                                const searchChar = e.key.toLowerCase();
+                                for (let i = 0; i < optionEls.length; i++) {
+                                    if (optionEls[i].textContent.toLowerCase().startsWith(searchChar)) {
+                                        toggleDropdown(true);
+                                        highlightedIndex = i;
+                                        highlightOption(highlightedIndex);
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                // 点击外部关闭下拉框
+                function handleClickOutside(e) {
+                    if (!customSelect.contains(e.target) && !dropdown.contains(e.target)) {
+                        toggleDropdown(false);
+                    }
+                }
+
+                // 初始化
+                function init() {
+                    initDropdownOptions();
+
+                    // 绑定事件
+                    customSelect.addEventListener('click', () => {
+                        toggleDropdown(!dropdown.classList.contains('show'));
+                    });
+
+                    customSelect.addEventListener('keydown', handleKeyDown);
+
+                    dropdown.addEventListener('click', e => {
+                        const optionEl = e.target.closest('.custom-select-option');
+                        if (optionEl) {
+                            selectOption(optionEl.dataset.value, optionEl.textContent);
+                        }
+                    });
+
+                    dropdown.addEventListener('mouseenter', e => {
+                        const optionEl = e.target.closest('.custom-select-option');
+                        if (optionEl) {
+                            clearHighlight();
+                            highlightedIndex = parseInt(optionEl.dataset.index);
+                        }
+                    });
+
+                    document.addEventListener('click', handleClickOutside);
+
+                    // 为选项添加 ID 以支持可访问性
+                    dropdown.querySelectorAll('.custom-select-option').forEach((opt, i) => {
+                        opt.id = `province-option-${i}`;
+                    });
+                }
+
+                // 页面加载完成后初始化
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
+            })();
+
+            // 模态框控制函数
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // 点击遮罩层关闭模态框
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay.show').forEach(modal => {
+                        closeModal(modal.id);
+                    });
+                }
+            });
+
+            // 修改链接点击行为
+            document.addEventListener('DOMContentLoaded', function () {
+                const userAgreementLink = document.querySelector('a[href="user-agreement.html"]');
+                const privacyPolicyLink = document.querySelector('a[href="privacy-policy.html"]');
+
+                if (userAgreementLink) {
+                    userAgreementLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        openModal('userAgreementModal');
+                    });
+                }
+
+                if (privacyPolicyLink) {
+                    privacyPolicyLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        openModal('privacyPolicyModal');
+                    });
+                }
+            });
+
+            function openHospitalLocationPicker() {
+                if (typeof MapPicker === 'undefined') {
+                    showMessage('地图组件加载失败，请刷新页面后重试', 'error', '医院注册失败');
+                    return;
+                }
+
+                const mapPicker = new MapPicker({
+                    addressInputId: 'hospitalAddress',
+                    latInputId: 'hospitalLat',
+                    lngInputId: 'hospitalLng',
+                    autoLocateOnOpen: true,
+                    onLocateError: function () {
+                        const locationHint = document.getElementById('hospitalLocationHint');
+                        if (locationHint) {
+                            locationHint.textContent = '未能自动获取当前位置，请在地图中手动选择医院位置';
+                        }
+                        showMessage('未能自动获取当前位置，请在地图中手动选择医院位置', 'error', '定位失败');
+                    },
+                    onConfirm: function (location) {
+                        const locationHint = document.getElementById('hospitalLocationHint');
+                        if (locationHint && location?.address) {
+                            locationHint.textContent = `已定位：${location.address}`;
+                        }
+
+                        const cityInput = document.getElementById('hospitalCity');
+                        if (cityInput) {
+                            cityInput.value = extractCityFromAddress(location?.address || '') || cityInput.value;
+                        }
+
+                        if (location?.address) {
+                            updateProvinceSelection(extractProvinceFromAddress(location.address));
+                        }
+                    },
+                });
+
+                const initialLat = parseFloat(document.getElementById('hospitalLat').value);
+                const initialLng = parseFloat(document.getElementById('hospitalLng').value);
+                const initialAddress = document.getElementById('hospitalAddress').value.trim();
+
+                mapPicker.open(
+                    Number.isFinite(initialLat) ? initialLat : null,
+                    Number.isFinite(initialLng) ? initialLng : null,
+                    initialAddress,
+                );
+            }
+
+            document.getElementById('openHospitalMapPicker').addEventListener('click', openHospitalLocationPicker);
+            document.getElementById('hospitalAddress').addEventListener('click', openHospitalLocationPicker);
+
+            // 角色选择
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.addEventListener('click', function () {
+                    document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const role = this.dataset.role;
+                    document.getElementById('role').value = role;
+
+                    // 显示/隐藏授权码输入框和医院名称输入框
+                    const authCodeGroup = document.getElementById('authCodeGroup');
+                    const hospitalNameGroup = document.getElementById('hospitalNameGroup');
+                    const hospitalLocationGroup = document.getElementById('hospitalLocationGroup');
+                    const hospitalCityGroup = document.getElementById('hospitalCityGroup');
+                    if (role === 'hospital') {
+                        authCodeGroup.classList.add('show');
+                        hospitalNameGroup.classList.add('show');
+                        hospitalLocationGroup.classList.add('show');
+                        hospitalCityGroup.classList.add('show');
+                        document.getElementById('authCode').required = true;
+                        document.getElementById('hospitalName').required = true;
+                        document.getElementById('hospitalAddress').required = true;
+                        document.getElementById('hospitalCity').required = true;
+                    } else {
+                        authCodeGroup.classList.remove('show');
+                        hospitalNameGroup.classList.remove('show');
+                        hospitalLocationGroup.classList.remove('show');
+                        hospitalCityGroup.classList.remove('show');
+                        document.getElementById('authCode').required = false;
+                        document.getElementById('hospitalName').required = false;
+                        document.getElementById('hospitalAddress').required = false;
+                        document.getElementById('hospitalCity').required = false;
+                        // 隐藏管理员联系方式
+                        document.getElementById('adminContactSection').classList.remove('show');
+                    }
+                });
+            });
+
+            // 省份选择变化时显示对应管理员联系方式
+            document.getElementById('province').addEventListener('change', async function () {
+                const province = this.value;
+                const adminContactSection = document.getElementById('adminContactSection');
+                const adminContactList = document.getElementById('adminContactList');
+                const role = document.getElementById('role').value;
+
+                // 仅在医院角色且选择了省份时显示
+                if (role === 'hospital' && province) {
+                    try {
+                        // 显示加载状态
+                        adminContactList.innerHTML =
+                            '<li style="text-align:center;padding:15px;color:#718096;"><i class="fas fa-spinner fa-spin"></i> 正在加载...</li>';
+                        adminContactSection.classList.add('show');
+
+                        // 从后端获取省份管理员信息
+                        const response = await fetch(
+                            `/api/auth/province-admins?province=${encodeURIComponent(province)}`
+                        );
+
+                        if (!response.ok) {
+                            throw new Error(`请求失败: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        const admins = data.success && Array.isArray(data.data) ? data.data : [];
+
+                        // 渲染管理员信息
+                        if (admins.length > 0) {
+                            adminContactList.innerHTML = admins.map(admin => renderAdminContact(admin)).join('');
+                        } else {
+                            adminContactList.innerHTML = `
+                            <li style="text-align:center;padding:15px;color:#718096;">
+                                <i class="fas fa-info-circle"></i> 暂无管理员信息，请联系系统管理员
+                            </li>
+                        `;
+                        }
+                    } catch (error) {
+                        console.error('加载管理员信息失败', error);
+                        adminContactList.innerHTML = `
+                        <li style="text-align:center;padding:15px;color:#718096;">
+                            <i class="fas fa-exclamation-circle"></i> 加载失败，请稍后重试
+                        </li>
+                    `;
+                    }
+                } else {
+                    adminContactSection.classList.remove('show');
+                }
+            });
+
+            // 渲染单个管理员联系方式
+            function renderAdminContact(admin) {
+                const isSubAdmin = admin.role === 'sub';
+                const roleText = isSubAdmin ? '省份管理员' : '系统管理员';
+                const name = admin.nickname || admin.username || '管理员';
+
+                let html = `
+                <li class="admin-contact-item">
+                    <div class="admin-contact-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="admin-contact-details">
+                        <div style="display:flex;align-items:center;flex-wrap:wrap;">
+                            <span class="admin-contact-value">${escapeHtml(name)}</span>
+                            <span class="admin-role-tag">${roleText}</span>
+                            ${admin.province ? `<span class="admin-province-tag">${escapeHtml(admin.province)}</span>` : ''}
+                        </div>
+            `;
+
+                if (admin.phone) {
+                    html += `
+                    <div class="admin-contact-label">联系电话</div>
+                    <div class="admin-contact-value">
+                        <a href="tel:${escapeHtml(admin.phone)}"><i class="fas fa-phone"></i> ${escapeHtml(admin.phone)}</a>
+                    </div>
+                `;
+                }
+
+                if (admin.email) {
+                    html += `
+                    <div class="admin-contact-label">电子邮箱</div>
+                    <div class="admin-contact-value">
+                        <a href="mailto:${escapeHtml(admin.email)}"><i class="fas fa-envelope"></i> ${escapeHtml(admin.email)}</a>
+                    </div>
+                `;
+                }
+
+                html += `
+                    </div>
+                </li>
+            `;
+
+                return html;
+            }
+
+            // HTML转义函数
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // ==================== 密码可见性切换功能 ====================
+            (function () {
+                // 第一个密码输入框
+                const passwordInput = document.getElementById('password');
+                const toggleBtn = document.getElementById('passwordToggleBtn');
+                const toggleIcon = toggleBtn.querySelector('i');
+
+                // 确认密码输入框
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                const confirmToggleBtn = document.getElementById('confirmPasswordToggleBtn');
+                const confirmToggleIcon = confirmToggleBtn.querySelector('i');
+
+                // 为两个输入框分别绑定切换函数
+                function setupPasswordToggle(input, btn, icon) {
+                    // 点击切换
+                    btn.addEventListener('click', function () {
+                        togglePasswordVisibility(input, btn, icon);
+                    });
+
+                    // 键盘事件支持（Enter 和 Space）
+                    btn.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            togglePasswordVisibility(input, btn, icon);
+                        }
+                    });
+                }
+
+                function togglePasswordVisibility(input, btn, icon) {
+                    // 保存当前光标位置
+                    const cursorPosition = input.selectionStart;
+                    const isPassword = input.type === 'password';
+
+                    // 切换输入框类型
+                    input.type = isPassword ? 'text' : 'password';
+
+                    // 切换图标
+                    icon.className = isPassword ? 'fas fa-eye' : 'fas fa-eye-slash';
+
+                    // 更新按钮状态
+                    btn.classList.toggle('visible', isPassword);
+                    btn.setAttribute('aria-label', isPassword ? '隐藏密码' : '显示密码');
+                    btn.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+
+                    // 恢复光标位置
+                    input.focus();
+                    input.setSelectionRange(cursorPosition, cursorPosition);
+                }
+
+                // 初始化两个密码输入框的切换功能
+                setupPasswordToggle(passwordInput, toggleBtn, toggleIcon);
+                setupPasswordToggle(confirmPasswordInput, confirmToggleBtn, confirmToggleIcon);
+            })();
+
+            // 密码强度检测
+            document.getElementById('password').addEventListener('input', function () {
+                const password = this.value;
+                const strengthEl = document.getElementById('passwordStrength');
+
+                if (password.length === 0) {
+                    strengthEl.style.display = 'none';
+                    strengthEl.className = 'password-strength';
+                    return;
+                }
+
+                strengthEl.style.display = 'block';
+
+                let strength = 0;
+                if (password.length >= 6) strength++;
+                if (password.length >= 10) strength++;
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+                if (strength <= 2) {
+                    strengthEl.className = 'password-strength weak';
+                } else if (strength <= 3) {
+                    strengthEl.className = 'password-strength medium';
+                } else {
+                    strengthEl.className = 'password-strength strong';
+                }
+            });
+
+            // 显示消息
+            let registerAlertTimer = null;
+
+            function hideMessage() {
+                const alertEl = document.getElementById('registerAlert');
+                if (!alertEl) {
+                    return;
+                }
+
+                alertEl.classList.remove('show');
+
+                if (registerAlertTimer) {
+                    clearTimeout(registerAlertTimer);
+                    registerAlertTimer = null;
+                }
+            }
+
+            function showMessage(message, type = 'error', title = null) {
+                const alertEl = document.getElementById('registerAlert');
+                if (!alertEl) {
+                    return;
+                }
+
+                const iconEl = alertEl.querySelector('.register-alert-icon i');
+                const titleEl = alertEl.querySelector('.register-alert-title');
+                const textEl = alertEl.querySelector('.register-alert-text');
+
+                alertEl.className = `register-alert ${type}`;
+                iconEl.className = `fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}`;
+                titleEl.textContent = title || (type === 'error' ? '注册失败' : '注册成功');
+                textEl.textContent = message;
+
+                if (registerAlertTimer) {
+                    clearTimeout(registerAlertTimer);
+                }
+
+                alertEl.classList.add('show');
+
+                registerAlertTimer = setTimeout(() => {
+                    hideMessage();
+                }, type === 'error' ? 5000 : 3000);
+            }
+
+            document.getElementById('registerAlertClose').addEventListener('click', hideMessage);
+
+            function getCommonRegisterFormData() {
+                return {
+                    username: document.getElementById('username').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    province: document.getElementById('province').value,
+                    agree: document.getElementById('agree').checked,
+                };
+            }
+
+            function getHospitalLocationData() {
+                const hospitalAddress = document.getElementById('hospitalAddress').value.trim();
+                const hospitalCityInput = document.getElementById('hospitalCity').value.trim();
+                return {
+                    hospitalAddress,
+                    hospitalLat: document.getElementById('hospitalLat').value.trim(),
+                    hospitalLng: document.getElementById('hospitalLng').value.trim(),
+                    hospitalCity: hospitalCityInput || extractCityFromAddress(hospitalAddress),
+                };
+            }
+
+            function extractCityFromAddress(address) {
+                if (!address) {
+                    return '';
+                }
+
+                const directControlledMatches = address.match(/(北京市|上海市|天津市|重庆市)/u);
+                if (directControlledMatches) {
+                    return directControlledMatches[1];
+                }
+
+                const cityMatches = address.match(/([^省]+市|[^自治区]+自治州|[^地区]+地区|[^盟]+盟)/u);
+                if (cityMatches) {
+                    return cityMatches[1];
+                }
+
+                const districtMatches = address.match(/([^省]+县|[^省]+区)/u);
+                if (districtMatches) {
+                    return districtMatches[1];
+                }
+
+                return '';
+            }
+
+            function getUserRegisterData() {
+                const commonData = getCommonRegisterFormData();
+                return {
+                    ...commonData,
+                    role: 'user',
+                };
+            }
+
+            function getHospitalRegisterData() {
+                const commonData = getCommonRegisterFormData();
+                const locationData = getHospitalLocationData();
+                return {
+                    ...commonData,
+                    ...locationData,
+                    role: 'hospital',
+                    authCode: document.getElementById('authCode').value.trim(),
+                    hospitalName: document.getElementById('hospitalName').value.trim(),
+                };
+            }
+
+            function validateCommonRegisterData(formData) {
+                const { username, email, password, confirmPassword, province, agree } = formData;
+
+                if (!username || !email || !password || !confirmPassword || !province) {
+                    showMessage('请填写完整的注册信息', 'error');
+                    return false;
+                }
+
+                if (username.length < 4 || username.length > 20) {
+                    showMessage('用户名长度应为 4-20 个字符', 'error');
+                    return false;
+                }
+
+                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    showMessage('用户名只能包含字母、数字和下划线', 'error');
+                    return false;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showMessage('请输入有效的邮箱地址', 'error');
+                    return false;
+                }
+
+                if (password.length < 6) {
+                    showMessage('密码长度至少 6 个字符', 'error');
+                    return false;
+                }
+
+                if (password !== confirmPassword) {
+                    showMessage('两次输入的密码不一致', 'error');
+                    return false;
+                }
+
+                if (!agree) {
+                    showMessage('请阅读并同意用户协议和隐私政策', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateUserRegisterData(formData) {
+                return validateCommonRegisterData(formData);
+            }
+
+            function getRoleMessageConfig(role) {
+                return role === 'hospital'
+                    ? {
+                          successTitle: '医院注册成功',
+                          successMessage: '医院账户注册成功！正在跳转到登录页面...',
+                          errorTitle: '医院注册失败',
+                          fallbackErrorMessage: '医院注册失败，请稍后重试',
+                      }
+                    : {
+                          successTitle: '用户注册成功',
+                          successMessage: '用户账户注册成功！正在跳转到登录页面...',
+                          errorTitle: '用户注册失败',
+                          fallbackErrorMessage: '用户注册失败，请稍后重试',
+                      };
+            }
+
+            function normalizeRegistrationErrorMessage(role, error) {
+                const roleName = role === 'hospital' ? '医院' : '用户';
+                const defaultMessage = role === 'hospital' ? '医院注册失败，请稍后重试' : '用户注册失败，请稍后重试';
+                const message = error && error.message ? error.message : defaultMessage;
+
+                if (message === '用户名已存在') {
+                    return `${roleName}账号用户名已存在，请更换后重试`;
+                }
+
+                return message;
+            }
+
+            function validateHospitalRegisterData(formData) {
+                if (!validateCommonRegisterData(formData)) {
+                    return false;
+                }
+
+                if (!formData.authCode) {
+                    showMessage('医院注册需要提供授权码', 'error', '医院注册失败');
+                    return false;
+                }
+
+                if (!formData.hospitalName) {
+                    showMessage('请填写医院名称', 'error', '医院注册失败');
+                    return false;
+                }
+
+                if (formData.hospitalName.length < 2 || formData.hospitalName.length > 100) {
+                    showMessage('医院名称长度应为2-100个字符', 'error', '医院注册失败');
+                    return false;
+                }
+
+                if (!formData.hospitalAddress || !formData.hospitalLat || !formData.hospitalLng) {
+                    showMessage('请先在地图中选择医院位置', 'error', '医院注册失败');
+                    return false;
+                }
+
+                if (!formData.hospitalCity) {
+                    showMessage('请填写医院所在市', 'error', '医院注册失败');
+                    return false;
+                }
+
+                if (!validateAuthCodeProvince()) {
+                    showMessage('您输入的省份授权码与所选医院地区不匹配，请核对后重新输入', 'error', '医院注册失败');
+                    return false;
+                }
+
+                return true;
+            }
+
+            async function ensureApiServiceLoaded() {
+                if (window.apiService) {
+                    return;
+                }
+
+                console.log('动态加载 api-service.js...');
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '/api/common/api-service.js';
+                    script.onload = () => {
+                        console.log('api-service.js 加载完成');
+                        resolve();
+                    };
+                    script.onerror = err => {
+                        console.error('加载 api-service.js 失败:', err);
+                        reject(new Error('无法加载 API 服务'));
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+
+            async function submitUserRegistration(formData) {
+                console.log('调用用户注册API...');
+                return await window.apiService.registerUser({
+                    username: formData.username,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,
+                    email: formData.email,
+                    province: formData.province,
+                    nickname: formData.username,
+                });
+            }
+
+            async function submitHospitalRegistration(formData) {
+                console.log('调用医院注册API...');
+                return await window.apiService.registerHospital({
+                    username: formData.username,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,
+                    email: formData.email,
+                    province: formData.province,
+                    city: formData.hospitalCity || formData.province,
+                    address: formData.hospitalAddress,
+                    phone: '',
+                    authCode: formData.authCode,
+                    hospitalName: formData.hospitalName,
+                    lat: Number(formData.hospitalLat),
+                    lng: Number(formData.hospitalLng),
+                });
+            }
+
+            // 表单提交
+            document.getElementById('registerForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                hideMessage();
+
+                const registerBtn = document.getElementById('registerBtn');
+                const btnText = registerBtn.querySelector('span');
+                const originalText = btnText.textContent;
+                const role = document.getElementById('role').value;
+                const messageConfig = getRoleMessageConfig(role);
+
+                const formData =
+                    role === 'hospital' ? getHospitalRegisterData() : getUserRegisterData();
+
+                const isValid =
+                    role === 'hospital'
+                        ? validateHospitalRegisterData(formData)
+                        : validateUserRegisterData(formData);
+
+                if (!isValid) {
+                    return;
+                }
+
+                registerBtn.disabled = true;
+                btnText.innerHTML = '注册中<span class="loading"></span>';
+
+                try {
+                    console.log('开始注册流程...');
+                    console.log('参数:', {
+                        username: formData.username,
+                        email: formData.email,
+                        role,
+                        province: formData.province,
+                    });
+
+                    await ensureApiServiceLoaded();
+
+                    const result =
+                        role === 'hospital'
+                            ? await submitHospitalRegistration(formData)
+                            : await submitUserRegistration(formData);
+
+                    console.log('注册API返回结果:', result);
+                    showMessage(messageConfig.successMessage, 'success', messageConfig.successTitle);
+
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                } catch (error) {
+                    console.error('注册错误:', error);
+                    console.error('错误堆栈:', error.stack);
+
+                    const errorMessage = normalizeRegistrationErrorMessage(role, error) || messageConfig.fallbackErrorMessage;
+
+                    showMessage(errorMessage, 'error', messageConfig.errorTitle);
+                    registerBtn.disabled = false;
+                    btnText.textContent = originalText;
+                }
+            });
+        </script>
+        <script src="/utils/common/global-enter-submit.js"></script>
+        <script src="/utils/common/touch-scroll-optimizer.js"></script>
+    </body>
+</html>

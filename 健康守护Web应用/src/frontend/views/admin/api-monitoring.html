@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="API 服务监控旧页面已停用，请通过 www.example.invalid 当前管理入口查看最新状态。" />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://www.example.invalid/views/admin/api-monitoring.html" />
+        <title>API 服务监控 - 旧页面已停用</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <style>
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                background: #0f172a;
+                color: #e2e8f0;
+                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            }
+
+            .retired-card {
+                width: min(680px, calc(100% - 32px));
+                padding: 32px;
+                border-radius: 18px;
+                background: rgba(15, 23, 42, 0.92);
+                border: 1px solid rgba(148, 163, 184, 0.2);
+                box-shadow: 0 18px 48px rgba(2, 6, 23, 0.4);
+            }
+
+            .retired-card h1 {
+                margin: 0 0 12px;
+                font-size: 28px;
+                color: #f8fafc;
+            }
+
+            .retired-card p {
+                margin: 0 0 12px;
+                line-height: 1.7;
+                color: #cbd5e1;
+            }
+
+            .retired-card a {
+                color: #60a5fa;
+                text-decoration: none;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/router/common/auth-guard.js"></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('admin');
+                }
+            });
+        </script>
+
+        <main class="retired-card">
+            <h1>旧 API 监控页已停用</h1>
+            <p>该独立页面属于旧版后台实现，当前后台已不再走这个独立监控页面。</p>
+            <p>请返回 <a href="/views/admin/admin.html">管理员后台</a> 使用现有管理流程。</p>
+        </main>
+
+        <!--
+        旧页面内容已停用，原内容包含：
+        - 服务卡片状态监控
+        - 7天状态趋势图
+        - 服务详情弹窗
+        - 立即检查接口逻辑
+        -->
+        <!-- <div class="legacy-api-monitoring-disabled"></div> -->
+    </body>
+</html>

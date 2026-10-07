@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="健康守护设置中心，管理个人资料、账户选项与设备连接入口。" />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://www.example.invalid/views/user/dashboard/settings.html" />
+        <title>设置 - 健康守护</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="stylesheet" href="/assets/styles/user/styles.css" />
+        <!-- 引入页面状态持久化模块 -->
+        <script src="/stores/common/state-persistor.js"></script>
+        <!-- 引入页面滚动管理器 -->
+        <!-- 引入基础档案完成状态判断 -->
+        <script src="/utils/common/profile-completion.js"></script>
+    </head>
+    <body>
+        <script src="/router/common/auth-guard.js"></script>
+        <script>
+            // 页面加载前检查登录状态
+            window.addEventListener('DOMContentLoaded', function () {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('user');
+                }
+            });
+        </script>
+        <!-- 导航栏 -->
+        <nav id="navbar" class="navbar navbar-with-back">
+            <div class="navbar-back-container">
+                <button class="back-button" onclick="window.location.href = '/views/user/dashboard/index.html'" aria-label="返回首页">
+                    <span class="back-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </span>
+                    返回
+                </button>
+                <span class="page-title">设置</span>
+                <div class="avatar-container">
+                    <button id="avatar-button" class="avatar-button">
+                        <div class="avatar"></div>
+                    </button>
+                    <div id="avatar-menu" class="avatar-menu">
+                        <button class="menu-item" onclick="window.location.href = '/views/user/dashboard/settings.html'">设置</button>
+                        <button class="menu-item" onclick="window.location.href = '/views/user/dashboard/device-connection.html'">
+                            设备连接
+                        </button>
+                        <button class="menu-item" onclick="logout()">退出登录</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 页面内容区域 -->
+        <main id="content" class="content">
+            <div class="status-card">
+                <h2>设置</h2>
+
+                <!-- 头像设置 -->
+                <div class="settings-section">
+                    <h3>头像设置</h3>
+                    <div class="avatar-settings">
+                        <div class="avatar-preview-container">
+                            <div class="avatar-preview-wrapper">
+                                <img
+                                    id="current-avatar"
+                                    class="avatar-preview"
+                                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20icon%20placeholder&image_size=square"
+                                    alt="用户头像"
+                                />
+                                <div class="avatar-overlay">
+                                    <label for="avatar-input" class="avatar-upload-btn">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3.172a1 1 0 0 1 .814.447l1.9 2.533a1 1 0 0 0 .814.447H19a2 2 0 0 1 2 2v10z"
+                                            />
+                                            <circle cx="12" cy="10" r="3" />
+                                        </svg>
+                                        更换头像
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="avatar-upload-info">
+                                <p class="avatar-hint">点击更换头像</p>
+                                <p class="avatar-format">支持 JPG、PNG、WEBP 格式，单张不超过 5MB</p>
+                                <p id="avatar-sync-status" class="avatar-sync-status">当前头像将同步展示到用户端各页面</p>
+                            </div>
+                        </div>
+                        <input type="file" id="avatar-input" accept="image/jpeg,image/png" style="display: none" />
+
+                        <!-- 裁剪模态框 -->
+                        <div id="crop-modal" class="modal crop-modal" style="display: none">
+                            <div class="crop-modal-content">
+                                <div class="modal-header">
+                                    <h3>调整头像</h3>
+                                    <button class="close-modal" onclick="closeCropModal()">&times;</button>
+                                </div>
+                                <div class="modal-body crop-modal-body">
+                                    <div class="crop-workspace">
+                                        <div class="crop-stage-panel">
+                                            <div class="crop-stage-header">
+                                                <div>
+                                                    <p class="crop-stage-label">实时编辑</p>
+                                                    <h4>拖拽位置，滚动缩放到理想构图</h4>
+                                                </div>
+                                                <span class="crop-stage-tip">圆形区域即最终头像，可滚轮或双指缩放</span>
+                                            </div>
+                                            <div class="crop-container">
+                                                <div class="crop-area">
+                                                    <img id="crop-image" src="" alt="裁剪图片" />
+                                                    <div class="crop-box"></div>
+                                                    <div class="crop-grid"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="crop-preview-panel">
+                                            <p class="crop-preview-title">头像预览</p>
+                                            <div class="crop-preview-wrapper">
+                                                <canvas id="crop-preview" class="crop-preview"></canvas>
+                                            </div>
+                                            <p class="crop-preview-hint">保存后将以高清圆形头像显示，不再额外压缩画质。</p>
+                                        </div>
+                                    </div>
+                                    <div class="crop-controls">
+                                        <div class="crop-slider-container">
+                                            <div class="crop-slider-header">
+                                                <label for="crop-zoom">缩放照片</label>
+                                                <span>支持滚轮与双指缩放</span>
+                                            </div>
+                                            <input type="range" id="crop-zoom" min="1" max="3" step="0.1" value="1" />
+                                        </div>
+                                        <div class="crop-buttons">
+                                            <button class="feature-button secondary" onclick="closeCropModal()">
+                                                取消
+                                            </button>
+                                            <button class="feature-button" onclick="applyCrop()">保存头像</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 加载状态 -->
+                        <div id="avatar-loading" class="avatar-loading" style="display: none">
+                            <div class="loading-spinner"></div>
+                            <p>正在上传...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="privacy-policy-modal" class="modal" style="display: none">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>隐私说明</h3>
+                            <button id="close-privacy-policy-modal" class="close-modal" type="button">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="about-info">
+                                <p>1. 基础档案仅用于健康分析、饮食建议、预约通知与附近服务推荐。</p>
+                                <p>2. 位置权限仅在您主动使用附近医院等定位能力时读取。</p>
+                                <p>3. 通知权限仅用于健康提醒、预约提醒和活动消息推送。</p>
+                                <p>4. 您可随时回到本页关闭相关开关或在浏览器设置中撤销系统权限。</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; padding: 0 24px 24px;">
+                            <button id="confirm-privacy-policy-modal" class="feature-button" type="button">我知道了</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 个人信息设置 -->
+                <div class="settings-section">
+                    <h3>个人信息</h3>
+                    <div class="settings-form">
+                        <div id="basic-profile-status" class="sync-hint" style="margin-bottom: 16px;"></div>
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" id="username" value="user123" />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" value="contact@example.invalid" />
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">性别</label>
+                            <select id="gender">
+                                <option value="保密">保密</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="age">年龄</label>
+                            <input type="number" id="age" min="0" max="150" placeholder="请输入年龄" />
+                        </div>
+                        <div class="form-group">
+                            <label for="height">身高（cm）</label>
+                            <input type="number" id="height" min="0" step="0.1" placeholder="请输入身高" />
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">体重（kg）</label>
+                            <input type="number" id="weight" min="0" step="0.1" placeholder="请输入体重" />
+                        </div>
+                        <button class="feature-button" onclick="savePersonalInfo()">保存个人信息</button>
+                    </div>
+                </div>
+
+                <!-- 密码设置 -->
+                <div class="settings-section">
+                    <h3>密码设置</h3>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label for="current-password">当前密码</label>
+                            <input type="password" id="current-password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">新密码</label>
+                            <input type="password" id="new-password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">确认新密码</label>
+                            <input type="password" id="confirm-password" />
+                        </div>
+                        <button class="feature-button" onclick="changePassword()">修改密码</button>
+                    </div>
+                </div>
+
+                <!-- 通知设置 -->
+                <div class="settings-section">
+                    <h3>通知设置</h3>
+                    <div class="settings-options">
+                        <div class="setting-item">
+                            <span>接收健康提醒</span>
+                            <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>接收预约通知</span>
+                            <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="sync-controls" style="margin-top: 16px; gap: 12px; flex-wrap: wrap;">
+                        <button id="request-notification-permission" class="feature-button secondary" type="button">开启系统通知权限</button>
+                    </div>
+                    <p id="notification-permission-status" class="sync-hint" style="margin-top: 12px;">通知权限状态：检测中...</p>
+                </div>
+
+                <!-- 隐私设置 -->
+                <div class="settings-section">
+                    <h3>隐私设置</h3>
+                    <div class="settings-options">
+                        <div class="setting-item">
+                            <span>允许数据收集</span>
+                            <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>允许位置访问</span>
+                            <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="sync-controls" style="margin-top: 16px; gap: 12px; flex-wrap: wrap;">
+                        <button id="request-location-permission" class="feature-button secondary" type="button">重新请求位置权限</button>
+                        <button id="view-privacy-policy" class="feature-button" type="button">查看隐私说明</button>
+                    </div>
+                    <p id="location-permission-status" class="sync-hint" style="margin-top: 12px;">位置权限状态：检测中...</p>
+                </div>
+
+                <!-- 设置同步 -->
+                <div class="settings-section">
+                    <h3>账号安全</h3>
+                    <div class="sync-section">
+                        <div class="sync-info" style="margin-bottom: 16px;">
+                            <p class="sync-hint" style="color: #ef4444;">
+                                注销账号后，您的用户账号及本地保存的资料将被移除，此操作不可恢复，请谨慎操作。
+                            </p>
+                        </div>
+                        <div class="sync-controls">
+                            <button id="deactivate-user-account" class="feature-button secondary" type="button" style="background: #ef4444; border-color: #ef4444; color: #fff;" onclick="deactivateUserAccount()">
+                                注销账号
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设置同步 -->
+                <div class="settings-section">
+                    <h3>设置同步</h3>
+                    <div class="sync-section">
+                        <div class="sync-status-container">
+                            <div id="sync-status" class="sync-status sync-status-idle">
+                                <span class="sync-indicator"></span>
+                                <span id="sync-status-text">等待同步</span>
+                            </div>
+                            <p id="last-sync-time" class="last-sync-time"></p>
+                        </div>
+                        <div class="sync-controls">
+                            <button class="feature-button sync-button" onclick="triggerManualSync()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                                </svg>
+                                立即同步
+                            </button>
+                        </div>
+                        <div class="sync-info">
+                            <p class="sync-hint">开启后，您的设置将在所有设备上保持同步</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </main>
+
+        <script src="/api/common/api-service.js"></script>
+        <script src="/utils/common/avatar-editor.js"></script>
+        <script src="/utils/config/constants.js"></script>
+        <script src="/stores/common/settings-sync-manager.js"></script>
+        <script src="/views/user/dashboard/settings.js"></script>
+    </body>
+</html>
