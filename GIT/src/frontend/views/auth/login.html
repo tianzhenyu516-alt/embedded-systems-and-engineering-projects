@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="登录健康守护系统，访问 www.example.invalid 获取健康管理、在线医院与 AI 健康服务。" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://www.example.invalid/views/auth/login.html" />
+        <title>登录 - 健康守护系统</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'" />
+        <script src="../../stores/common/state-persistor.js" defer></script>
+        <script src="../../utils/common/page-scroll-manager.js" defer></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+                position: relative;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow-x: hidden;
+                color: #2d3748;
+            }
+
+            /* 动态渐变背景 - 优化 */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(-45deg, #667eea, #764ba2, #06b6d4, #8b5cf6);
+                background-size: 400% 400%;
+                animation: gradientShift 12s ease infinite;
+                z-index: -2;
+            }
+
+            /* 浮动粒子效果 - 优化 */
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image:
+                    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+                    radial-gradient(circle at 70% 15%, rgba(255, 255, 255, 0.1) 0%, transparent 45%);
+                animation: particleFloat 25s ease-in-out infinite;
+                z-index: -1;
+            }
+
+            @keyframes gradientShift {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            @keyframes particleFloat {
+                0%,
+                100% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 0.6;
+                }
+                25% {
+                    transform: translate(60px, -40px) scale(1.15);
+                    opacity: 0.8;
+                }
+                50% {
+                    transform: translate(-50px, 50px) scale(0.9);
+                    opacity: 0.7;
+                }
+                75% {
+                    transform: translate(40px, 30px) scale(1.05);
+                    opacity: 0.75;
+                }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(40px) scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
+            @keyframes shimmer {
+                0% {
+                    background-position: -200% 0;
+                }
+                100% {
+                    background-position: 200% 0;
+                }
+            }
+
+            /* 登录容器 - 全面优化 */
+            .login-container {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(25px) saturate(180%);
+                -webkit-backdrop-filter: blur(25px) saturate(180%);
+                border-radius: 32px;
+                box-shadow:
+                    0 25px 80px rgba(0, 0, 0, 0.35),
+                    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+                width: 90%;
+                max-width: 460px;
+                padding: 56px 48px;
+                animation: slideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .login-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: linear-gradient(90deg, #667eea, #764ba2, #8b5cf6, #06b6d4);
+                background-size: 200% 100%;
+                animation: shimmer 3s linear infinite;
+            }
+
+            .login-container::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(102, 126, 234, 0.03) 0%, transparent 60%);
+                pointer-events: none;
+            }
+
+            /* 标题区域 - 优化 */
+            .login-header {
+                text-align: center;
+                margin-bottom: 44px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .login-header .logo {
+                width: 90px;
+                height: 90px;
+                margin: 0 auto 24px;
+                background: linear-gradient(135deg, #1976d2 0%, #00897b 50%, #7cb342 100%);
+                border-radius: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow:
+                    0 12px 35px rgba(25, 118, 210, 0.45),
+                    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            .login-header .logo:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow:
+                    0 18px 45px rgba(25, 118, 210, 0.55),
+                    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            }
+
+            .login-header .logo i {
+                font-size: 2.7rem;
+                color: white;
+                animation: pulse 3s ease-in-out infinite;
+            }
+
+            .login-header h1 {
+                font-size: 2.1rem;
+                font-weight: 700;
+                background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 10px;
+                letter-spacing: -0.5px;
+            }
+
+            .login-header p {
+                color: #718096;
+                font-size: 0.98rem;
+                font-weight: 400;
+            }
+
+            /* 表单样式 - 优化 */
+            .login-form {
+                margin-bottom: 28px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .account-tips {
+                margin-bottom: 24px;
+                padding: 16px 18px;
+                border-radius: 18px;
+                background: rgba(99, 102, 241, 0.08);
+                border: 1px solid rgba(99, 102, 241, 0.16);
+                color: #334155;
+                position: relative;
+                z-index: 1;
+            }
+
+            .account-tips-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.92rem;
+                font-weight: 600;
+                color: #4338ca;
+                margin-bottom: 10px;
+            }
+
+            .account-tips-list {
+                margin: 0;
+                padding-left: 18px;
+                display: grid;
+                gap: 6px;
+                font-size: 0.86rem;
+                line-height: 1.6;
+            }
+
+            .account-tips code {
+                font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+                font-size: 0.82rem;
+                background: rgba(255, 255, 255, 0.7);
+                padding: 2px 6px;
+                border-radius: 8px;
+                color: #1e293b;
+            }
+
+            .account-tips-note {
+                margin-top: 10px;
+                font-size: 0.82rem;
+                color: #64748b;
+                line-height: 1.5;
+            }
+
+            .form-group {
+                margin-bottom: 28px;
+                position: relative;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 10px;
+                color: #4a5568;
+                font-weight: 500;
+                font-size: 0.92rem;
+                letter-spacing: 0.2px;
+            }
+
+            .input-wrapper {
+                position: relative;
+            }
+
+            .input-wrapper i {
+                position: absolute;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #a0aec0;
+                font-size: 1.15rem;
+                transition: color 0.3s ease;
+                z-index: 2;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 16px 60px 16px 54px;
+                border: 2px solid #e2e8f0;
+                border-radius: 16px;
+                font-size: 1rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(255, 255, 255, 0.9);
+                font-family: inherit;
+            }
+
+            .password-toggle-btn {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 44px;
+                height: 44px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #a0aec0;
+                font-size: 1.15rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 10;
+                border-radius: 50%;
+            }
+
+            .password-toggle-btn:hover {
+                color: #667eea;
+                background: rgba(102, 126, 234, 0.1);
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .password-toggle-btn:active {
+                transform: translateY(-50%) scale(0.95);
+            }
+
+            .password-toggle-btn.visible {
+                color: #667eea;
+            }
+
+            .password-toggle-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+            }
+
+            .form-group input:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow:
+                    0 0 0 4px rgba(102, 126, 234, 0.15),
+                    0 4px 12px rgba(102, 126, 234, 0.1);
+                background: white;
+            }
+
+            .form-group input:focus + i {
+                color: #667eea;
+            }
+
+            .form-group input::placeholder {
+                color: #cbd5e0;
+                transition: opacity 0.3s ease;
+            }
+
+            .form-group input:focus::placeholder {
+                opacity: 0.5;
+            }
+
+            .role-hint {
+                min-height: 22px;
+                margin-top: 10px;
+                padding-left: 2px;
+                font-size: 0.88rem;
+                color: #718096;
+                transition: color 0.2s ease;
+            }
+
+            .role-hint.suggested {
+                color: #4c51bf;
+                font-weight: 500;
+            }
+
+            .role-hint.mismatch {
+                color: #c05621;
+                font-weight: 600;
+            }
+
+            .role-hint.unknown {
+                color: #718096;
+            }
+
+            /* 记住我和忘记密码 - 优化 */
+            .form-options {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 28px;
+                font-size: 0.92rem;
+            }
+
+            .remember-me {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                color: #4a5568;
+                transition: color 0.3s ease;
+            }
+
+            .remember-me:hover {
+                color: #667eea;
+            }
+
+            .remember-me input[type='checkbox'] {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                accent-color: #667eea;
+                transition: transform 0.2s ease;
+            }
+
+            .remember-me input[type='checkbox']:hover {
+                transform: scale(1.1);
+            }
+
+            .forgot-password {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .forgot-password::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                transition: width 0.3s ease;
+            }
+
+            .forgot-password:hover {
+                color: #764ba2;
+            }
+
+            .forgot-password:hover::after {
+                width: 100%;
+            }
+
+            /* 登录按钮 - 优化 */
+            .btn-login {
+                width: 100%;
+                padding: 17px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
+                background-size: 200% 200%;
+                color: white;
+                border: none;
+                border-radius: 16px;
+                font-size: 1.08rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow:
+                    0 6px 20px rgba(102, 126, 234, 0.45),
+                    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+                font-family: inherit;
+                letter-spacing: 0.3px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .btn-login::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .btn-login:hover {
+                transform: translateY(-3px);
+                box-shadow:
+                    0 10px 30px rgba(102, 126, 234, 0.55),
+                    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+                background-position: 100% 0;
+            }
+
+            .btn-login:hover::before {
+                left: 100%;
+            }
+
+            .btn-login:active {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 4px 15px rgba(102, 126, 234, 0.4),
+                    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            }
+
+            .btn-login:disabled {
+                opacity: 0.65;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+            }
+
+            /* 分隔线 - 优化 */
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 34px 0;
+                color: #a0aec0;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            }
+
+            .divider span {
+                padding: 0 18px;
+            }
+
+            /* 注册链接 - 优化 */
+            .register-link {
+                text-align: center;
+                color: #718096;
+                font-size: 0.98rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .register-link a {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                position: relative;
+                padding: 2px 0;
+            }
+
+            .register-link a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                transition: width 0.3s ease;
+            }
+
+            .register-link a:hover {
+                color: #764ba2;
+            }
+
+            .register-link a:hover::after {
+                width: 100%;
+            }
+
+            /* 角色选择 - 全面优化 */
+            .role-selector {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+                margin-bottom: 28px;
+            }
+
+            .role-option {
+                padding: 16px 12px;
+                border: 2px solid #e2e8f0;
+                border-radius: 18px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(255, 255, 255, 0.8);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .role-option::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .role-option:hover {
+                border-color: #667eea;
+                transform: translateY(-3px);
+                background: white;
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            }
+
+            .role-option:hover::before {
+                opacity: 1;
+            }
+
+            .role-option.active {
+                border-color: #667eea;
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+                box-shadow:
+                    0 6px 20px rgba(102, 126, 234, 0.25),
+                    0 0 0 1px rgba(102, 126, 234, 0.1) inset;
+                transform: translateY(-2px);
+            }
+
+            .role-option i {
+                font-size: 1.7rem;
+                margin-bottom: 8px;
+                display: block;
+                color: #667eea;
+                position: relative;
+                z-index: 1;
+                transition: all 0.3s ease;
+            }
+
+            .role-option.active i {
+                transform: scale(1.1);
+            }
+
+            .role-option span {
+                font-size: 0.88rem;
+                color: #4a5568;
+                font-weight: 600;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* 消息提示 - 优化 */
+            .message {
+                padding: 14px 18px;
+                border-radius: 14px;
+                margin-bottom: 22px;
+                font-size: 0.92rem;
+                font-weight: 500;
+                display: none;
+                animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                z-index: 1;
+            }
+
+            .message.error {
+                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+                color: #991b1b;
+                border: 1px solid #fca5a5;
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+            }
+
+            .message.success {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                color: #065f46;
+                border: 1px solid #6ee7b7;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            }
+
+            .message i {
+                margin-right: 10px;
+            }
+
+            /* 登录弹出提示 */
+            .login-alert {
+                position: fixed;
+                top: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px);
+                min-width: min(420px, calc(100vw - 32px));
+                max-width: min(420px, calc(100vw - 32px));
+                padding: 16px 18px;
+                border-radius: 16px;
+                color: #fff;
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+                z-index: 3000;
+            }
+
+            .login-alert.show {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .login-alert.error {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            }
+
+            .login-alert.success {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            }
+
+            .login-alert-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.16);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .login-alert-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .login-alert-title {
+                font-size: 0.98rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .login-alert-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                opacity: 0.95;
+                word-break: break-word;
+            }
+
+            .login-alert-close {
+                border: none;
+                background: transparent;
+                color: inherit;
+                cursor: pointer;
+                padding: 4px;
+                font-size: 1rem;
+                opacity: 0.85;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+
+            .login-alert-close:hover {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+
+            .login-alert-close:focus {
+                outline: none;
+            }
+
+            /* 响应式设计 - 增强 */
+            @media (max-width: 520px) {
+                .login-container {
+                    padding: 44px 32px;
+                    width: 94%;
+                    border-radius: 28px;
+                }
+
+                .login-header h1 {
+                    font-size: 1.8rem;
+                }
+
+                .login-header .logo {
+                    width: 78px;
+                    height: 78px;
+                }
+
+                .login-header .logo i {
+                    font-size: 2.3rem;
+                }
+
+                .role-selector {
+                    gap: 10px;
+                }
+
+                .role-option {
+                    padding: 14px 10px;
+                    border-radius: 16px;
+                }
+
+                .role-option i {
+                    font-size: 1.5rem;
+                }
+
+                .role-option span {
+                    font-size: 0.82rem;
+                }
+            }
+
+            @media (max-width: 400px) {
+                .login-container {
+                    padding: 38px 26px;
+                }
+
+                .role-selector {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+
+                .form-options {
+                    flex-direction: column;
+                    gap: 16px;
+                    align-items: flex-start;
+                }
+
+                .forgot-password {
+                    align-self: flex-end;
+                }
+            }
+
+            @media (max-width: 340px) {
+                .role-selector {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* 加载动画 - 优化 */
+            .loading {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                border: 2px solid rgba(255, 255, 255, 0.35);
+                border-top-color: white;
+                border-radius: 50%;
+                animation: spin 0.5s linear infinite;
+                margin-left: 10px;
+                vertical-align: middle;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loginAlert" class="login-alert" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="login-alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="login-alert-content">
+                <div class="login-alert-title">提示</div>
+                <div class="login-alert-text"></div>
+            </div>
+            <button type="button" class="login-alert-close" id="loginAlertClose" aria-label="关闭提示">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <img src="/assets/icons/favicon.svg" alt="Logo" style="width: 60px; height: 60px;">
+                </div>
+                <h1>欢迎回来</h1>
+                <p>登录您的健康守护账户</p>
+            </div>
+
+            <div id="message" class="message"></div>
+
+
+
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label>选择角色</label>
+                    <div class="role-selector">
+                        <div class="role-option active" data-role="user">
+                            <i class="fas fa-user"></i>
+                            <span>用户</span>
+                        </div>
+                        <div class="role-option" data-role="hospital">
+                            <i class="fas fa-hospital"></i>
+                            <span>医院</span>
+                        </div>
+                        <div class="role-option" data-role="admin">
+                            <i class="fas fa-user-shield"></i>
+                            <span>管理员</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="role" name="role" value="user" />
+                </div>
+
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" name="username" placeholder="请输入用户名" required />
+                    </div>
+                    <div id="roleHint" class="role-hint" aria-live="polite"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="请输入密码" required />
+                        <button
+                            type="button"
+                            class="password-toggle-btn"
+                            id="passwordToggleBtn"
+                            aria-label="显示密码"
+                            aria-pressed="false"
+                            tabindex="0"
+                        >
+                            <i class="fas fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" name="remember" />
+                        <span>记住我</span>
+                    </label>
+                    <a href="forgot-password.html" class="forgot-password">忘记密码</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span>登录</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>还没有账户？</span>
+            </div>
+
+            <div class="register-link">
+                <a href="register.html">立即注册</a>
+            </div>
+        </div>
+
+        <script src="../../router/common/auth-guard.js"></script>
+        <script src="../../utils/config/api-config.js"></script>
+        <script src="../../api/common/api-service.js"></script>
+        <script>
+            // ==================== 加密/解密工具函数 ====================
+            const CredentialStorage = {
+                STORAGE_KEY: 'healthguard_remembered_credentials',
+
+                // 简单的XOR加密（仅用于混淆，生产环境应使用更强的加密）
+                encrypt: function (text, key = 'healthguard2026') {
+                    let result = '';
+                    for (let i = 0; i < text.length; i++) {
+                        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                    }
+                    return btoa(result);
+                },
+
+                decrypt: function (encoded, key = 'healthguard2026') {
+                    try {
+                        const text = atob(encoded);
+                        let result = '';
+                        for (let i = 0; i < text.length; i++) {
+                            result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                        }
+                        return result;
+                    } catch (e) {
+                        return '';
+                    }
+                },
+
+                // 保存凭证（按角色存储）
+                saveCredentials: function (role, username, password) {
+                    try {
+                        const allCredentials = this.getAllCredentials();
+                        allCredentials[role] = {
+                            username: username,
+                            password: this.encrypt(password),
+                            savedAt: new Date().toISOString(),
+                        };
+                        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allCredentials));
+                        return true;
+                    } catch (e) {
+                        console.error('保存凭证失败:', e);
+                        return false;
+                    }
+                },
+
+                // 获取指定角色的凭证
+                getCredentials: function (role) {
+                    try {
+                        const allCredentials = this.getAllCredentials();
+                        const creds = allCredentials[role];
+                        if (creds) {
+                            return {
+                                username: creds.username,
+                                password: this.decrypt(creds.password),
+                            };
+                        }
+                        return null;
+                    } catch (e) {
+                        console.error('获取凭证失败:', e);
+                        return null;
+                    }
+                },
+
+                // 获取所有凭证
+                getAllCredentials: function () {
+                    try {
+                        const stored = localStorage.getItem(this.STORAGE_KEY);
+                        return stored ? JSON.parse(stored) : {};
+                    } catch (e) {
+                        return {};
+                    }
+                },
+
+                // 清除指定角色的凭证
+                clearCredentials: function (role) {
+                    try {
+                        const allCredentials = this.getAllCredentials();
+                        delete allCredentials[role];
+                        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allCredentials));
+                        return true;
+                    } catch (e) {
+                        console.error('清除凭证失败:', e);
+                        return false;
+                    }
+                },
+
+                // 清除所有凭证
+                clearAllCredentials: function () {
+                    try {
+                        localStorage.removeItem(this.STORAGE_KEY);
+                        return true;
+                    } catch (e) {
+                        console.error('清除所有凭证失败', e);
+                        return false;
+                    }
+                },
+
+                // 检查是否有保存的凭证
+                hasCredentials: function (role) {
+                    return this.getCredentials(role) !== null;
+                },
+            };
+
+            // ==================== 表单填充/清空函数 ====================
+            const roleNameMap = {
+                user: '用户',
+                hospital: '医院',
+                admin: '管理员',
+                sub: '副管理员',
+            };
+            const roleHintEl = document.getElementById('roleHint');
+            let lastRoleHintRequestId = 0;
+
+            function setRoleHint(message = '', type = '') {
+                if (!roleHintEl) {
+                    return;
+                }
+                roleHintEl.textContent = message;
+                roleHintEl.className = type ? `role-hint ${type}` : 'role-hint';
+            }
+
+            function setActiveRole(role, options = {}) {
+                const { fillCredentials = true } = options;
+                document.querySelectorAll('.role-option').forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.role === role);
+                });
+                document.getElementById('role').value = role;
+                if (fillCredentials) {
+                    fillFormForRole(role);
+                }
+            }
+
+            async function updateRoleHintByUsername(username, options = {}) {
+                const { autoSwitch = false } = options;
+                const trimmedUsername = String(username || '').trim();
+                const currentRole = document.getElementById('role').value;
+
+                if (!trimmedUsername) {
+                    setRoleHint('');
+                    return;
+                }
+
+                const requestId = ++lastRoleHintRequestId;
+
+                try {
+                    const hint = await window.apiService.getRoleHint(trimmedUsername);
+                    if (requestId !== lastRoleHintRequestId) {
+                        return;
+                    }
+
+                    if (!hint.matched || !hint.role) {
+                        setRoleHint('未识别到该账号的角色，请确认用户名后再登录。', 'unknown');
+                        return;
+                    }
+
+                    if (autoSwitch && hint.role !== currentRole) {
+                        setActiveRole(hint.role, { fillCredentials: false });
+                        setRoleHint(`已为你自动匹配到“${hint.roleName}”角色。`, 'suggested');
+                        return;
+                    }
+
+                    if (hint.role === currentRole) {
+                        setRoleHint(`当前账号匹配“${hint.roleName}”角色，可直接登录。`, 'suggested');
+                    } else {
+                        setRoleHint(`该账号更像是“${hint.roleName}”角色，建议切换后再登录。`, 'mismatch');
+                    }
+                } catch (error) {
+                    if (requestId !== lastRoleHintRequestId) {
+                        return;
+                    }
+                    setRoleHint('');
+                }
+            }
+
+            function fillFormForRole(role) {
+                const creds = CredentialStorage.getCredentials(role);
+                if (creds) {
+                    document.getElementById('username').value = creds.username;
+                    document.getElementById('password').value = creds.password;
+                    document.getElementById('remember').checked = true;
+                } else {
+                    clearForm();
+                    document.getElementById('remember').checked = false;
+                }
+            }
+
+            function clearForm() {
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }
+
+            // ==================== 角色选择 ====================
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.addEventListener('click', function () {
+                    const newRole = this.dataset.role;
+                    setActiveRole(newRole);
+                    updateRoleHintByUsername(document.getElementById('username').value);
+                });
+            });
+
+            // ==================== 显示消息 ====================
+            let loginAlertTimer = null;
+
+            function hideMessage() {
+                const alertEl = document.getElementById('loginAlert');
+                if (!alertEl) {
+                    return;
+                }
+
+                alertEl.classList.remove('show');
+
+                if (loginAlertTimer) {
+                    clearTimeout(loginAlertTimer);
+                    loginAlertTimer = null;
+                }
+            }
+
+            function showMessage(message, type = 'error') {
+                const alertEl = document.getElementById('loginAlert');
+                if (!alertEl) {
+                    return;
+                }
+
+                const iconEl = alertEl.querySelector('.login-alert-icon i');
+                const titleEl = alertEl.querySelector('.login-alert-title');
+                const textEl = alertEl.querySelector('.login-alert-text');
+
+                alertEl.className = `login-alert ${type}`;
+                iconEl.className = `fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}`;
+                titleEl.textContent = type === 'error' ? '登录失败' : '登录成功';
+                textEl.textContent = message;
+
+                if (loginAlertTimer) {
+                    clearTimeout(loginAlertTimer);
+                }
+
+                alertEl.classList.add('show');
+
+                loginAlertTimer = setTimeout(() => {
+                    hideMessage();
+                }, type === 'error' ? 5000 : 3000);
+            }
+
+            document.getElementById('loginAlertClose').addEventListener('click', hideMessage);
+
+            const usernameInput = document.getElementById('username');
+            usernameInput.addEventListener('blur', function () {
+                updateRoleHintByUsername(this.value, { autoSwitch: true });
+            });
+            usernameInput.addEventListener('input', function () {
+                const trimmedValue = this.value.trim();
+                if (!trimmedValue) {
+                    lastRoleHintRequestId += 1;
+                    setRoleHint('');
+                }
+            });
+
+            // ==================== 表单提交 ====================
+            document.getElementById('loginForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                hideMessage();
+
+                const loginBtn = document.getElementById('loginBtn');
+                const btnText = loginBtn.querySelector('span');
+                const originalText = btnText.textContent;
+
+                // 获取表单数据
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+                const remember = document.getElementById('remember').checked;
+
+                // 验证
+                if (!username || !password) {
+                    showMessage('请填写完整的登录信息', 'error');
+                    return;
+                }
+
+                // 禁用按钮并显示加载状态
+                loginBtn.disabled = true;
+                btnText.innerHTML = '登录中<span class="loading"></span>';
+
+                try {
+                    console.log('开始登录流程...');
+                    console.log('参数:', { username, role, remember });
+
+                    // 调用API服务登录
+                    const loginResult = await window.apiService.login(username, password, role, remember);
+                    console.log('登录API返回结果:', loginResult);
+
+                    // 构建登录信息 - 使用从API返回的实际角色
+                    const actualRole = loginResult.user.role || role;
+                    const loginInfo = {
+                        username: loginResult.user.username,
+                        role: actualRole,
+                        token: loginResult.token,
+                        refreshToken: '' + Date.now(),
+                        expiresIn: 3600 * 24 * 7, // 7天
+                        user: loginResult.user,
+                        loginTime: new Date().toISOString(),
+                    };
+
+                    // 保存登录信息
+                    sessionStorage.setItem('loginInfo', JSON.stringify(loginInfo));
+                    document.cookie = 'healthguard_frontend_auth=1; path=/; max-age=604800; SameSite=Lax';
+
+                    // 处理"记住我"选项
+                    if (remember) {
+                        // 保存凭证到CredentialStorage - 使用实际角色
+                        CredentialStorage.saveCredentials(actualRole, username, password);
+                        // 保存登录信息到localStorage，实现记住登录状态
+                        localStorage.setItem('loginInfo', JSON.stringify(loginInfo));
+                    } else {
+                        // 不记住，清除该角色的凭证
+                        CredentialStorage.clearCredentials(actualRole);
+                        // 确保不保存到 localStorage
+                        localStorage.removeItem('loginInfo');
+                    }
+
+                    showMessage('登录成功！正在跳转...', 'success');
+
+                    // 跳转到对应页面
+                    setTimeout(() => {
+                        // 使用AuthGuard进行重定向
+                        if (window.AuthGuard) {
+                            window.AuthGuard.redirectAfterLogin();
+                        } else {
+                            // 备选方案 - 先检查是否有重定向URL
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const redirectUrl = urlParams.get('redirect')
+                                || sessionStorage.getItem('redirectUrl')
+                                || localStorage.getItem('redirectUrl');
+                            if (redirectUrl) {
+                                sessionStorage.removeItem('redirectUrl');
+                                localStorage.removeItem('redirectUrl');
+                                window.location.href = redirectUrl;
+                            } else {
+                                // 备选方案 - 使用实际角色
+                                switch (actualRole) {
+                                    case 'user':
+                                        window.location.href = '/views/user/dashboard/index.html';
+                                        break;
+                                    case 'hospital':
+                                        window.location.href = '/views/hospital/hospital.html';
+                                        break;
+                                    case 'admin':
+                                        window.location.href = '/views/admin/admin.html';
+                                        break;
+                                    case 'sub':
+                                        window.location.href = '/views/sub-admin/sub-admin.html';
+                                        break;
+                                }
+                            }
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error('登录错误:', error);
+
+                    // 提供更友好的错误提示
+                    let errorMessage = '登录失败，请稍后重试';
+                    if (error.message) {
+                        errorMessage = error.message;
+                    }
+
+                    if (errorMessage.includes('账号角色不匹配')) {
+                        errorMessage = `${errorMessage}（如：普通用户请选择“用户”，后台账号请选择对应的管理员角色）`;
+                    }
+
+                    showMessage(errorMessage, 'error');
+                    loginBtn.disabled = false;
+                    btnText.textContent = originalText;
+                }
+            });
+
+            // ==================== 密码可见性切换功能 ====================
+            (function () {
+                const passwordInput = document.getElementById('password');
+                const toggleBtn = document.getElementById('passwordToggleBtn');
+                const toggleIcon = toggleBtn.querySelector('i');
+
+                // 点击切换
+                toggleBtn.addEventListener('click', togglePasswordVisibility);
+
+                // 键盘事件支持（Enter和Space键）
+                toggleBtn.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        togglePasswordVisibility();
+                    }
+                });
+
+                function togglePasswordVisibility() {
+                    // 保存当前光标位置
+                    const cursorPosition = passwordInput.selectionStart;
+                    const isPassword = passwordInput.type === 'password';
+
+                    // 切换输入框类型
+                    passwordInput.type = isPassword ? 'text' : 'password';
+
+                    // 切换图标
+                    toggleIcon.className = isPassword ? 'fas fa-eye' : 'fas fa-eye-slash';
+
+                    // 更新按钮状态
+                    toggleBtn.classList.toggle('visible', isPassword);
+                    toggleBtn.setAttribute('aria-label', isPassword ? '隐藏密码' : '显示密码');
+                    toggleBtn.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+
+                    // 恢复光标位置
+                    passwordInput.focus();
+                    passwordInput.setSelectionRange(cursorPosition, cursorPosition);
+                }
+            })();
+
+            // ==================== 页面加载时初始化 ====================
+            window.addEventListener('load', function () {
+                // 检查URL参数
+                const urlParams = new URLSearchParams(window.location.search);
+                const logout = urlParams.get('logout');
+                const force = urlParams.get('force');
+                const clearCreds = urlParams.get('clearCreds');
+                const reason = urlParams.get('reason');
+                const authExpiredMessage = sessionStorage.getItem('authExpiredMessage');
+                const authExpiredRedirectDelay = Number(sessionStorage.getItem('authExpiredRedirectDelay')) || 2000;
+                const clearRole = urlParams.get('clearRole');
+                const authCleanupNotice = sessionStorage.getItem('authCleanupNotice');
+
+                // 如果有clearCreds 参数，清除所有凭证或指定角色的凭证
+                if (clearCreds === 'true') {
+                    if (clearRole) {
+                        CredentialStorage.clearCredentials(clearRole);
+                    } else {
+                        CredentialStorage.clearAllCredentials();
+                    }
+                }
+
+                const initialRole = document.getElementById('role').value;
+                fillFormForRole(initialRole);
+                updateRoleHintByUsername(document.getElementById('username').value, { autoSwitch: true });
+
+                // 如果有logout 或 force 参数，清除登录信息
+                if (logout === 'true' || force === 'true') {
+                    localStorage.removeItem('loginInfo');
+                    sessionStorage.removeItem('loginInfo');
+                    document.cookie = 'healthguard_frontend_auth=; path=/; max-age=0; SameSite=Lax';
+                    sessionStorage.removeItem('authExpiredMessage');
+                    sessionStorage.removeItem('authExpiredRedirectDelay');
+                    sessionStorage.removeItem('authExpiredRedirecting');
+                    // 清除URL参数
+                    if (window.history.replaceState) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                }
+
+                if (reason === 'session-expired' && authExpiredMessage) {
+                    showMessage(`${authExpiredMessage}，${Math.round(authExpiredRedirectDelay / 1000)} 秒后已自动跳转到登录页`, 'error');
+                    sessionStorage.removeItem('authExpiredMessage');
+                    sessionStorage.removeItem('authExpiredRedirectDelay');
+                    sessionStorage.removeItem('authExpiredRedirecting');
+                    if (window.history.replaceState) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } else if (authCleanupNotice) {
+                    showMessage(authCleanupNotice, 'error');
+                    sessionStorage.removeItem('authCleanupNotice');
+                }
+
+                // 检查是否已登录
+                const loginInfo = sessionStorage.getItem('loginInfo') || localStorage.getItem('loginInfo');
+                if (loginInfo && !force && !logout) {
+                    try {
+                        const info = JSON.parse(loginInfo);
+                        const currentRole = info?.user?.role || info?.role;
+                        switch (currentRole) {
+                            case 'user':
+                            case 'hospital':
+                            case 'admin':
+                            case 'sub':
+                                if (currentRole === 'admin') {
+                                    window.location.href = '/views/admin/admin.html';
+                                } else if (currentRole === 'sub') {
+                                    window.location.href = '/views/sub-admin/sub-admin.html';
+                                } else if (currentRole === 'hospital') {
+                                    window.location.href = '/views/hospital/hospital.html';
+                                } else {
+                                    window.location.href = '/views/user/dashboard/index.html';
+                                }
+                                break;
+                        }
+                    } catch (e) {
+                        console.error('解析登录信息失败:', e);
+                        localStorage.removeItem('loginInfo');
+                        sessionStorage.removeItem('loginInfo');
+                    }
+                } else {
+                    // 未登录，尝试填充默认角色（user）的凭证
+                    fillFormForRole('user');
+                }
+            });
+        </script>
+    </body>
+</html>

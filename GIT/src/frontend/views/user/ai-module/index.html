@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="AI 智能助手旧页面已停用，请通过 www.example.invalid 当前入口访问健康守护服务。" />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://www.example.invalid/views/user/ai-module/index.html" />
+        <title>AI 智能助手 - 旧页面已停用</title>
+        <link rel="stylesheet" href="/assets/styles/user/styles.css" />
+        <style>
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                background: #f5f7fb;
+                color: #1f2937;
+                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            }
+
+            .retired-card {
+                width: min(640px, calc(100% - 32px));
+                padding: 32px;
+                border-radius: 16px;
+                background: #fff;
+                box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+            }
+
+            .retired-card h1 {
+                margin: 0 0 12px;
+                font-size: 28px;
+            }
+
+            .retired-card p {
+                margin: 0 0 12px;
+                line-height: 1.7;
+                color: #4b5563;
+            }
+
+            .retired-card a {
+                color: #2563eb;
+                text-decoration: none;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/router/common/auth-guard.js" defer></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('user');
+                }
+            });
+        </script>
+
+        <main class="retired-card">
+            <h1>旧 AI 页面已停用</h1>
+            <p>该独立 AI 页面已下线，AI 相关能力已整合到用户首页的主流程中。</p>
+            <p>如需继续使用，请返回 <a href="/views/user/dashboard/index.html">用户首页</a>。</p>
+        </main>
+
+        <!--
+        旧页面内容已停用，暂时保留如下以便后续回溯：
+        - 独立 AI 聊天容器
+        - 问题类型选择器
+        - 历史记录区域
+        - 对应 script.js 初始化逻辑
+        -->
+        <!-- <div class="legacy-ai-module-disabled"></div> -->
+
+        <script src="script.js" defer></script>
+    </body>
+</html>

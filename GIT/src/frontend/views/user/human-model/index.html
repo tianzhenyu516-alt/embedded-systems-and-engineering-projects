@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="3D人体模型 - 健康守护平台" />
+        <meta name="robots" content="index,follow" />
+        <title>3D人体模型 - 健康守护</title>
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+        <link rel="stylesheet" href="/assets/styles/user/styles.css?v=34" />
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            #model-container {
+                width: 100%;
+                height: calc(100vh - 60px);
+                position: relative;
+                background: radial-gradient(ellipse at center, #0a1628 0%, #000000 100%);
+                overflow: hidden;
+            }
+            #canvas-container { width: 100%; height: 100%; }
+            .controls-panel {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                background: rgba(0, 20, 40, 0.9);
+                backdrop-filter: blur(15px);
+                padding: 25px;
+                border-radius: 15px;
+                border: 1px solid rgba(0, 255, 255, 0.3);
+                color: white;
+                min-width: 220px;
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+                z-index: 100;
+            }
+            .controls-panel h3 {
+                margin-bottom: 20px;
+                color: #00ffff;
+                font-size: 18px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+                padding-bottom: 10px;
+                text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            }
+            .control-group { margin-bottom: 18px; }
+            .control-group label {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                font-size: 14px;
+                transition: color 0.3s;
+            }
+            .control-group label:hover { color: #00ffff; }
+            .control-group input[type="checkbox"] {
+                margin-right: 12px;
+                width: 18px;
+                height: 18px;
+                accent-color: #00ffff;
+                cursor: pointer;
+            }
+            .control-group input[type="range"] {
+                width: 100%;
+                margin-top: 8px;
+                cursor: pointer;
+            }
+            .btn {
+                background: linear-gradient(135deg, #00a8cc, #0077b6);
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 13px;
+                width: 100%;
+                margin-top: 8px;
+                transition: all 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 600;
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            }
+            .btn:hover {
+                background: linear-gradient(135deg, #00ffff, #0096c7);
+                transform: translateY(-2px);
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+            }
+            .stats-panel {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 20, 40, 0.9);
+                backdrop-filter: blur(15px);
+                padding: 20px;
+                border-radius: 15px;
+                border: 1px solid rgba(0, 255, 255, 0.3);
+                color: #00ffff;
+                font-size: 13px;
+                font-family: 'Courier New', monospace;
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+                z-index: 100;
+            }
+            .stats-panel div { margin-bottom: 8px; }
+            .stats-panel span { color: #fff; }
+            .loading-overlay {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #00ffff;
+                font-size: 18px;
+                text-align: center;
+                z-index: 200;
+            }
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(0, 255, 255, 0.3);
+                border-top-color: #00ffff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+            @keyframes spin { to { transform: rotate(360deg); } }
+            .back-button {
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 20, 40, 0.9);
+                backdrop-filter: blur(15px);
+                padding: 12px 30px;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 255, 255, 0.3);
+                color: #00ffff;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+                z-index: 100;
+            }
+            .back-button:hover {
+                background: rgba(0, 255, 255, 0.2);
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/router/common/auth-guard.js" defer></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function() {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('user');
+                }
+            });
+        </script>
+
+        <div id="model-container">
+            <div id="canvas-container"></div>
+            
+            <div class="loading-overlay" id="loading">
+                <div class="loading-spinner"></div>
+                <div id="loadingText">正在加载3D人体模型...</div>
+            </div>
+
+            <div class="controls-panel">
+                <h3>🎛️ 控制面板</h3>
+                <div class="control-group">
+                    <label><input type="checkbox" id="autoRotate" checked> 自动旋转</label>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="showWireframe"> 线框模式</label>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="showGlow" checked> 发光效果</label>
+                </div>
+                <div class="control-group">
+                    <label>旋转速度</label>
+                    <input type="range" id="rotateSpeed" min="0.1" max="3" step="0.1" value="1">
+                </div>
+                <button class="btn" id="resetView">⟲ 重置视角</button>
+                <button class="btn" id="toggleAnimation">⏯ 暂停/播放</button>
+            </div>
+
+            <div class="stats-panel">
+                <div>顶点数: <span id="vertexCount">-</span></div>
+                <div>面数: <span id="faceCount">-</span></div>
+                <div>模型类型: <span>3D人体模型</span></div>
+            </div>
+
+            <button class="back-button" onclick="goBack()">← 返回仪表盘</button>
+        </div>
+
+        <script src="/assets/vendor/three.r128.min.js"></script>
+        <script src="/assets/vendor/OrbitControls.r128.js"></script>
+        <script src="/assets/vendor/GLTFLoader.r128.js"></script>
+        
+        <script>
+            let scene, camera, renderer, controls;
+            let humanModel, particleSystem, ringSystem;
+            let mixer;
+            let clock;
+            let isAnimating = true;
+            let sharedMaterial;
+            let mainRing, innerRing, outerRing;
+
+            function init() {
+                try {
+                    clock = new THREE.Clock();
+                    scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0x000000);
+                    scene.fog = new THREE.Fog(0x000000, 5, 20);
+
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+                    camera.position.set(0, 1.0, 5);
+
+                    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    renderer.shadowMap.enabled = true;
+                    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.05;
+                    controls.minDistance = 2;
+                    controls.maxDistance = 10;
+                    controls.maxPolarAngle = Math.PI / 2;
+                    controls.target.set(0, 0.9, 0);
+                    controls.autoRotate = true;
+                    controls.autoRotateSpeed = 0.8;
+
+                    setupLighting();
+                    createParticles();
+                    createRings();
+                    setupEventListeners();
+                    loadGLBModel();
+                    animate();
+                } catch (error) {
+                    console.error('初始化错误:', error);
+                    document.getElementById('loadingText').textContent = '加载失败: ' + error.message;
+                    document.getElementById('loadingText').style.color = '#ff6666';
+                }
+            }
+
+            function setupLighting() {
+                const ambientLight = new THREE.AmbientLight(0x004444, 0.5);
+                scene.add(ambientLight);
+
+                const mainLight = new THREE.PointLight(0x00ffff, 2, 20);
+                mainLight.position.set(3, 5, 3);
+                scene.add(mainLight);
+
+                const fillLight = new THREE.PointLight(0x0088ff, 1.5, 20);
+                fillLight.position.set(-3, 3, -3);
+                scene.add(fillLight);
+
+                const bottomLight = new THREE.PointLight(0x00ffff, 1, 15);
+                bottomLight.position.set(0, -2, 0);
+                scene.add(bottomLight);
+            }
+
+            let loadAttempts = 0;
+            const MAX_LOAD_ATTEMPTS = 3;
+
+            function loadGLBModel() {
+                loadAttempts++;
+                const loader = new THREE.GLTFLoader();
+                const modelPath = './Xbot.glb';
+                
+                const loadingText = document.getElementById('loadingText');
+                loadingText.textContent = '正在加载3D人体模型...';
+                loadingText.style.color = '#00ffff';
+                
+                loader.load(
+                    modelPath,
+                    function(gltf) {
+                        humanModel = gltf.scene;
+                        
+                        const box = new THREE.Box3().setFromObject(humanModel);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        const scale = 1.8 / maxDim;
+                        humanModel.scale.setScalar(scale);
+                        humanModel.position.sub(center.multiplyScalar(scale));
+                        humanModel.position.y += 0.9;
+                        
+                        let vertexCount = 0;
+                        let faceCount = 0;
+                        
+                        sharedMaterial = new THREE.MeshPhongMaterial({
+                            color: 0x00ffff,
+                            wireframe: false,
+                            transparent: true,
+                            opacity: 0.9,
+                            side: THREE.DoubleSide,
+                            shininess: 100,
+                            emissive: 0x003344,
+                            emissiveIntensity: 0.5,
+                            flatShading: false
+                        });
+
+                        humanModel.traverse(function(child) {
+                            if (child.isMesh) {
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                                child.material = sharedMaterial;
+                                
+                                if (child.geometry) {
+                                    vertexCount += child.geometry.attributes.position.count;
+                                    if (child.geometry.index) {
+                                        faceCount += child.geometry.index.count / 3;
+                                    } else {
+                                        faceCount += child.geometry.attributes.position.count / 3;
+                                    }
+                                }
+                            }
+                        });
+                        
+                        document.getElementById('vertexCount').textContent = vertexCount.toLocaleString();
+                        document.getElementById('faceCount').textContent = Math.floor(faceCount).toLocaleString();
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        if (gltf.animations && gltf.animations.length > 0) {
+                            mixer = new THREE.AnimationMixer(humanModel);
+                            const action = mixer.clipAction(gltf.animations[0]);
+                            action.play();
+                        }
+                        
+                        scene.add(humanModel);
+                        loadAttempts = 0;
+                    },
+                    function(xhr) {
+                        if (xhr.total > 0) {
+                            const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                            loadingText.textContent = `加载中... ${percent}%`;
+                        } else {
+                            const mb = (xhr.loaded / 1024 / 1024).toFixed(1);
+                            loadingText.textContent = `已加载 ${mb} MB...`;
+                        }
+                    },
+                    function(error) {
+                        console.error('模型加载失败 (第' + loadAttempts + '次尝试):', error);
+                        
+                        if (loadAttempts < MAX_LOAD_ATTEMPTS) {
+                            loadingText.textContent = '加载失败，正在重试 (' + loadAttempts + '/' + MAX_LOAD_ATTEMPTS + ')...';
+                            loadingText.style.color = '#ffaa00';
+                            setTimeout(loadGLBModel, 1500);
+                        } else {
+                            let errMsg = '模型加载失败';
+                            if (error && error.target && error.target.status === 403) {
+                                errMsg = '模型加载失败：权限不足，请重新登录';
+                            } else if (error && error.target && error.target.status === 404) {
+                                errMsg = '模型加载失败：找不到模型文件';
+                            } else if (error && error.message) {
+                                errMsg = '模型加载失败：' + error.message;
+                            }
+                            loadingText.textContent = errMsg;
+                            loadingText.style.color = '#ff6666';
+                        }
+                    }
+                );
+            }
+
+            function createParticles() {
+                const particleCount = 400;
+                const particles = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    const theta = Math.random() * Math.PI * 2;
+                    const phi = Math.random() * Math.PI;
+                    const r = 0.8 + Math.random() * 1.5;
+                    
+                    positions[i3] = r * Math.sin(phi) * Math.cos(theta);
+                    positions[i3 + 1] = 0.5 + r * Math.cos(phi) * 0.6;
+                    positions[i3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+
+                    colors[i3] = 0;
+                    colors[i3 + 1] = 0.8 + Math.random() * 0.2;
+                    colors[i3 + 2] = 1;
+                }
+
+                particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const particleMaterial = new THREE.PointsMaterial({
+                    size: 0.012,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.6,
+                    blending: THREE.AdditiveBlending
+                });
+
+                particleSystem = new THREE.Points(particles, particleMaterial);
+                scene.add(particleSystem);
+            }
+
+            function createRings() {
+                ringSystem = new THREE.Group();
+
+                const ringMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00ffff,
+                    transparent: true,
+                    opacity: 0.4,
+                    side: THREE.DoubleSide
+                });
+
+                mainRing = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.75, 64), ringMaterial);
+                mainRing.rotation.x = -Math.PI / 2;
+                mainRing.position.y = -0.5;
+                ringSystem.add(mainRing);
+
+                innerRing = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.52, 64), ringMaterial);
+                innerRing.rotation.x = -Math.PI / 2;
+                innerRing.position.y = -0.5;
+                ringSystem.add(innerRing);
+
+                outerRing = new THREE.Mesh(new THREE.RingGeometry(0.9, 0.92, 64), ringMaterial);
+                outerRing.rotation.x = -Math.PI / 2;
+                outerRing.position.y = -0.5;
+                ringSystem.add(outerRing);
+
+                const gridHelper = new THREE.GridHelper(2, 20, 0x00ffff, 0x004444);
+                gridHelper.position.y = -0.5;
+                gridHelper.material.transparent = true;
+                gridHelper.material.opacity = 0.25;
+                ringSystem.add(gridHelper);
+
+                scene.add(ringSystem);
+            }
+
+            function setupEventListeners() {
+                window.addEventListener('resize', onWindowResize, false);
+
+                document.getElementById('autoRotate').addEventListener('change', function(e) {
+                    controls.autoRotate = e.target.checked;
+                });
+
+                document.getElementById('rotateSpeed').addEventListener('input', function(e) {
+                    controls.autoRotateSpeed = parseFloat(e.target.value);
+                });
+
+                document.getElementById('showWireframe').addEventListener('change', function(e) {
+                    if (sharedMaterial) {
+                        sharedMaterial.wireframe = e.target.checked;
+                        sharedMaterial.flatShading = e.target.checked;
+                        sharedMaterial.needsUpdate = true;
+                    }
+                });
+
+                document.getElementById('showGlow').addEventListener('change', function(e) {
+                    if (sharedMaterial) {
+                        sharedMaterial.emissiveIntensity = e.target.checked ? 0.5 : 0.1;
+                        sharedMaterial.opacity = e.target.checked ? 0.9 : 1;
+                    }
+                });
+
+                document.getElementById('resetView').addEventListener('click', function() {
+                    camera.position.set(0, 1.0, 5);
+                    controls.target.set(0, 0.9, 0);
+                    controls.update();
+                });
+
+                document.getElementById('toggleAnimation').addEventListener('click', function() {
+                    isAnimating = !isAnimating;
+                });
+            }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const delta = clock.getDelta();
+                const time = clock.getElapsedTime();
+
+                if (isAnimating) {
+                    if (particleSystem) particleSystem.rotation.y = time * 0.08;
+
+                    if (mainRing) mainRing.rotation.z = time * 0.4;
+                    if (innerRing) innerRing.rotation.z = -time * 0.25;
+                    if (outerRing) outerRing.rotation.z = time * 0.15;
+
+                    if (mixer) {
+                        mixer.update(delta);
+                    }
+                }
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            function goBack() {
+                window.location.href = '/views/user/dashboard/index.html';
+            }
+
+            init();
+        </script>
+    </body>
+</html>

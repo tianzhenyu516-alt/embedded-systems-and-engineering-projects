@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="健康守护健康趋势页面，查看用户近期的多维健康数据变化。" />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="canonical" href="https://www.example.invalid/views/user/dashboard/health-trend.html" />
+    <title>健康数据趋势 - 健康守护</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+    <link rel="shortcut icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+    <link rel="stylesheet" href="/assets/styles/user/styles.css" />
+    <script src="/assets/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+    <script src="/router/common/auth-guard.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            if (window.AuthGuard) {
+                AuthGuard.protectPage('user');
+            }
+        });
+    </script>
+    <nav id="navbar" class="navbar navbar-with-back">
+        <div class="navbar-back-container">
+            <button class="back-button" onclick="window.location.href = 'index.html'" aria-label="返回首页">
+                <span class="back-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </span>
+                返回
+            </button>
+            <span class="page-title">健康数据趋势</span>
+            <div class="avatar-container">
+                <button id="avatar-button" class="avatar-button">
+                    <div class="avatar"></div>
+                </button>
+                <div id="avatar-menu" class="avatar-menu">
+                    <button class="menu-item" data-action="settings" onclick="window.location.href = 'settings.html'">设置</button>
+                    <button class="menu-item" data-action="device-connection" onclick="window.location.href = 'device-connection.html'">设备连接</button>
+                    <button class="menu-item" data-action="logout" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="content" class="content">
+        <div class="status-card" style="padding: 0; overflow: visible;">
+            <div id="health-trend-container"></div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { EnhancedHealthTrendChart } from '../health-guardian/modules/enhancedHealthTrendChart.js';
+        import { healthDataManager } from '../health-guardian/modules/healthDataManager.js';
+
+        function loadUserAvatar() {
+            try {
+                const loginInfo = JSON.parse(sessionStorage.getItem('loginInfo'));
+                if (loginInfo && loginInfo.user && loginInfo.user.avatar) {
+                    const avatarDiv = document.querySelector('.avatar');
+                    if (avatarDiv) {
+                        avatarDiv.style.backgroundImage = `url(${loginInfo.user.avatar})`;
+                    }
+                }
+            } catch (error) {
+                console.error('加载用户头像失败:', error);
+            }
+        }
+
+        function setupAvatarMenu() {
+            const avatarButton = document.getElementById('avatar-button');
+            const avatarMenu = document.getElementById('avatar-menu');
+
+            if (avatarButton && avatarMenu) {
+                avatarButton.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    avatarMenu.classList.toggle('show');
+                });
+
+                document.addEventListener('click', function () {
+                    avatarMenu.classList.remove('show');
+                });
+
+                avatarMenu.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+        }
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                if (window.AuthGuard) {
+                    AuthGuard.logout();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUserAvatar();
+            setupAvatarMenu();
+            
+            const trendChart = new EnhancedHealthTrendChart('health-trend-container');
+            
+            const existingData = healthDataManager.getData();
+            if (existingData.length === 0) {
+                healthDataManager.generateMockData();
+            }
+        });
+    </script>
+</body>
+</html>

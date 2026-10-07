@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="???? Fitbit ?????????????????????" />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://www.yunqi.life/views/user/dashboard/fitbit-callback.html" />
+        <title>Fitbit ???? - ????</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                position: relative;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                color: white;
+                overflow: hidden;
+            }
+
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 40%, #43e97b 70%, #51eaea 100%);
+                background-size: 400% 400%;
+                animation: gradientFlow 14s ease infinite;
+                z-index: -1;
+            }
+
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image:
+                    radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.35) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(67, 233, 123, 0.35) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 50%, rgba(118, 75, 162, 0.25) 0%, transparent 50%);
+                animation: particleFloat 16s ease-in-out infinite;
+                z-index: -1;
+            }
+
+            @keyframes gradientFlow {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            @keyframes particleFloat {
+                0%,
+                100% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 0.5;
+                }
+                33% {
+                    transform: translate(35px, -35px) scale(1.1);
+                    opacity: 0.7;
+                }
+                66% {
+                    transform: translate(-25px, 25px) scale(0.95);
+                    opacity: 0.6;
+                }
+            }
+
+            .container {
+                text-align: center;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                max-width: 400px;
+                width: 90%;
+            }
+
+            .logo {
+                font-size: 3rem;
+                margin-bottom: 20px;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.1);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                font-weight: 300;
+            }
+
+            .status {
+                font-size: 1.1rem;
+                margin-bottom: 30px;
+                opacity: 0.9;
+            }
+
+            .loading {
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                border: 3px solid rgba(255, 255, 255, 0.3);
+                border-top: 3px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 20px;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .success {
+                color: #4caf50;
+            }
+
+            .error {
+                color: #f44336;
+            }
+
+            .btn {
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/utils/config/app-config.js"></script>
+        <script>
+            window.FITBIT_REDIRECT_URI = '/views/user/dashboard/fitbit-callback.html'.startsWith('http')
+                ? '/views/user/dashboard/fitbit-callback.html'
+                : `${window.location.origin}${window.BASE_CONFIG ? window.BASE_CONFIG.basePath : ''}/views/user/dashboard/fitbit-callback.html`;
+        </script>
+        <script src="/router/common/auth-guard.js"></script>
+        <script>
+            // 页面加载前检查登录状�?            window.addEventListener('DOMContentLoaded', function () {
+                if (window.AuthGuard) {
+                    AuthGuard.protectPage('user');
+                }
+            });
+        </script>
+        <div class="container">
+            <div class="logo">💚</div>
+            <h1>Fitbit 认证</h1>
+            <div id="status" class="status">
+                <div class="loading"></div>
+                正在处理认证...
+            </div>
+            <div id="message" style="display: none">
+                <p id="messageText"></p>
+                <a href="#" id="closeBtn" class="btn" style="display: none">关闭窗口</a>
+            </div>
+        </div>
+
+        <script>
+            // 处理URL参数
+            function handleAuthCallback() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const error = urlParams.get('error');
+                const state = urlParams.get('state');
+
+                const statusEl = document.getElementById('status');
+                const messageEl = document.getElementById('message');
+                const messageTextEl = document.getElementById('messageText');
+                const closeBtnEl = document.getElementById('closeBtn');
+
+                if (error) {
+                    // 认证失败
+                    statusEl.innerHTML = '<div class="error">�?/div>认证失败';
+                    messageTextEl.textContent = `错误: ${error}`;
+                    messageEl.style.display = 'block';
+                    closeBtnEl.style.display = 'inline-block';
+                    closeBtnEl.onclick = () => window.close();
+                } else if (code) {
+                    // 认证成功
+                    statusEl.innerHTML = '<div class="success">�?/div>认证成功';
+                    messageTextEl.textContent = '正在获取访问权限...';
+                    messageEl.style.display = 'block';
+
+                    // 通知父窗口认证成�?                    setTimeout(() => {
+                        if (window.opener) {
+                            window.opener.postMessage(
+                                {
+                                    type: 'fitbit_auth_success',
+                                    code: code,
+                                    state: state,
+                                },
+                                '*'
+                            );
+                        }
+                        window.close();
+                    }, 2000);
+                } else {
+                    // 未知状�?                    statusEl.innerHTML = '<div class="error">�?/div>未知状�?;
+                    messageTextEl.textContent = '未找到认证信�?;
+                    messageEl.style.display = 'block';
+                    closeBtnEl.style.display = 'inline-block';
+                    closeBtnEl.onclick = () => window.close();
+                }
+            }
+
+            // 页面加载完成后处理认证回�?            document.addEventListener('DOMContentLoaded', handleAuthCallback);
+
+            // 监听来自父窗口的消息
+            window.addEventListener('message', function (event) {
+                if (event.data.type === 'fitbit_auth_request') {
+                    // 可以在这里添加额外的处理逻辑
+                }
+            });
+        </script>
+    </body>
+</html>
