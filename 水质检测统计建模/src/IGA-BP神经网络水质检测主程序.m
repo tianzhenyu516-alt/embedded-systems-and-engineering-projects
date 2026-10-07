@@ -3,7 +3,10 @@
 % 输出参数：水质类别（I-V类用1-5表示）
 %xlsread('D:\resources\MATLAB\R2010a\bin\water_quality_data.xlsx'); % 加载数据文件，格式为[N×5]的输入矩阵，[N×1]的输出向量
 %% 数据加载（Excel文件）
-filename = fullfile(fileparts(mfilename('fullpath')), '..', 'data', 'water_quality_data（兴平）.xlsx');
+filename = getenv('WATER_QUALITY_DATA_FILE');
+if isempty(filename)
+    filename = fullfile(fileparts(mfilename('fullpath')), '..', 'data', 'water_quality_data.xlsx');
+end
 
 % 读取数据并更改变量名
 input_data = xlsread(filename, 'A2:E180')';   % 5×N矩阵

@@ -50,6 +50,7 @@ Thumbs.db
 !.env.example
 node_modules/
 dist/
+水质检测统计建模/data/
 __pycache__/
 *.pyc
 
